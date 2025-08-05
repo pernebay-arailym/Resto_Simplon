@@ -1,27 +1,25 @@
 from sqlmodel import Field, SQLModel
-import uuid
 from typing import Literal
 from typing import Optional
 from enum import Enum
 
 
-class OrderStatus(str, Enum):  # Enum for order status to ensure valid values.
+class OrderDetailStatus(str, Enum):  # Enum for order status to ensure valid values.
     CREATED = "Created"
     PREPARING = "Preparing"
     READY = "Ready"
     SERVED = "Served"
     CANCELLED = "Cancelled"
-    PAID = "Paid"
 
 
 class OrderDetail(
     SQLModel, table=True
 ):  # OrderDetail links an Order to its MenuItems (many-to-many).
 
-    order_id: Optional[int] = Field(default_factory=uuid.uuid4, primary_key=True)
+    order_id: int = Field(..., primary_key=True)
     detail_id: Optional[int] = Field(default=None, primary_key=True)
     menu_id: int = Field(..., foreign_key="menu.id")
-    price: float = Field(..., gt=0)
+    price: float = Field(..., ge=0)
     comment: str = Field(default="", max_length=255)
     quantity: int = Field(..., gt=0)
-    status: OrderStatus = Field(...)  # Using the OrderStatus enum for status field
+    status: OrderDetailStatus = Field(default=OrderDetailStatus.CREATED)  # Using the OrderStatus enum for status field
