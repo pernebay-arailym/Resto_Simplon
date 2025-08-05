@@ -22,4 +22,4 @@ class OrderBase(
     client_id: int = Field(..., foreign_key="user.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     total_price: float = Field(..., gt=0)
-    status: OrderStatus = Field(...)  # Using the OrderStatus enum for status field
+    status: OrderStatus = Field(default=OrderStatus.CREATED)  # Using the OrderStatus enum for status field
