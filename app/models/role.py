@@ -8,5 +8,5 @@ class RoleEnum(str, Enum):
     customer = "CUSTOMER"
 
 class Role(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    role: str = Field(unique=True, nullable=False, ) # RoleEnum
+    id: Optional[int] = Field(..., primary_key=True)
+    role: str = Field(..., unique=True, nullable=False, ) # RoleEnum

@@ -1,8 +1,8 @@
-from __future__ import annotations
+from __future__ import annotations  # essai pour éviter les références circulaires
 from contextlib import asynccontextmanager
 from typing import Union
 from fastapi import FastAPI
-#from app.models.hero import Hero
+
 from app.core.database import create_db_and_tables, get_session, engine
 
 
@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     """
     print("Application en cours de démarrage...")
     # Crée les tables de la base de données au démarrage
-    create_db_and_tables() 
+    create_db_and_tables()
     # Le 'yield' indique que l'application est maintenant démarrée et prête à servir
     yield
     print("Application en cours d'arrêt...")
@@ -24,8 +24,10 @@ async def lifespan(app: FastAPI):
     # mais vous pourriez fermer d'autres types de connexions (Redis, etc.).
     # engine.dispose() # Par exemple, si vous vouliez forcer la fermeture
 
+
 # Crée l'application FastAPI en passant la fonction lifespan
 app = FastAPI(lifespan=lifespan)
+
 
 @app.get("/")
 def read_root():
