@@ -2,6 +2,7 @@ from sqlmodel import Field, SQLModel
 from typing import Literal
 from typing import Optional
 from enum import Enum
+import sqlalchemy as sa
 
 
 class OrderDetailStatus(str, Enum):  # Enum for order status to ensure valid values.
@@ -22,4 +23,9 @@ class OrderDetail(
     price: float = Field(..., ge=0)
     comment: str = Field(default="", max_length=255)
     quantity: int = Field(..., gt=0)
-    status: OrderDetailStatus = Field(default=OrderDetailStatus.CREATED)  # Using the OrderStatus enum for status field
+    status: OrderDetailStatus = Field(
+        default=OrderDetailStatus.CREATED,
+        sa_column=sa.Column(
+            sa.Enum(OrderDetailStatus, name="order_detail_status", create_type=True)
+        ),
+    )  # Using the OrderStatus enum for status field
