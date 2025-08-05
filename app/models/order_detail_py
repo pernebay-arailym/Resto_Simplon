@@ -4,7 +4,8 @@ from typing import Literal
 from typing import Optional
 from enum import Enum
 
-class OrderStatus(str, Enum): # Enum for order status to ensure valid values.
+
+class OrderStatus(str, Enum):  # Enum for order status to ensure valid values.
     CREATED = "Created"
     PREPARING = "Preparing"
     READY = "Ready"
@@ -12,7 +13,10 @@ class OrderStatus(str, Enum): # Enum for order status to ensure valid values.
     CANCELLED = "Cancelled"
     PAID = "Paid"
 
-class OrderDetail(SQLModel, table=True): # OrderDetail links an Order to its MenuItems (many-to-many).
+
+class OrderDetail(
+    SQLModel, table=True
+):  # OrderDetail links an Order to its MenuItems (many-to-many).
 
     order_id: Optional[int] = Field(default_factory=uuid.uuid4, primary_key=True)
     detail_id: Optional[int] = Field(default=None, primary_key=True)
@@ -20,5 +24,4 @@ class OrderDetail(SQLModel, table=True): # OrderDetail links an Order to its Men
     price: float = Field(..., gt=0)
     comment: str = Field(default="", max_length=255)
     quantity: int = Field(..., gt=0)
-    status: OrderStatus = Field(...) # Using the OrderStatus enum for status field
-
+    status: OrderStatus = Field(...)  # Using the OrderStatus enum for status field
