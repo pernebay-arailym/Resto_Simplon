@@ -3,7 +3,7 @@ from sqlmodel import Field, SQLModel
 from datetime import datetime, timezone
 
 
-class CategoryBase(SQLModel, table=True):
+class Category(SQLModel, table=True):
     """
     Category model.
 

@@ -3,7 +3,7 @@ from sqlmodel import Field, SQLModel
 from datetime import datetime, timezone
 
 
-class MenuBase(SQLModel, table=True):
+class Menu(SQLModel, table=True):
     """
     Menu model.
 
