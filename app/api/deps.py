@@ -17,4 +17,4 @@ def get_db() -> Generator[Session, None, None]:
         yield session
 
 
-SessionDep = Annotated[Session, Depends(get_db)]
+SessionDep = Annotated[Session, Depends(get_db)]  # Alexis : j'ai rien compris
