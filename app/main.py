@@ -1,8 +1,11 @@
 from contextlib import asynccontextmanager
 from typing import Union
 from fastapi import FastAPI
+from app.api.main import router
+from app.core.config import settings
 
-from app.core.database import create_db_and_tables, get_session, engine
+# on utilise alembic pour la création de la BDD...
+# from app.core.database import create_db_and_tables, get_session, engine
 
 
 # Définition de la fonction lifespan
@@ -13,8 +16,9 @@ async def lifespan(app: FastAPI):
     Exécute des tâches au démarrage et à l'arrêt.
     """
     print("Application en cours de démarrage...")
-    # Crée les tables de la base de données au démarrage
-    create_db_and_tables()
+    # on passe par alembic pour la création de la BDD
+    # # Crée les tables de la base de données au démarrage
+    # create_db_and_tables()
     # Le 'yield' indique que l'application est maintenant démarrée et prête à servir
     yield
     print("Application en cours d'arrêt...")
@@ -27,12 +31,16 @@ async def lifespan(app: FastAPI):
 # Crée l'application FastAPI en passant la fonction lifespan
 app = FastAPI(lifespan=lifespan)
 
+# Gestion des CORS qu'il faudra très certainement activer
+# # Set all CORS enabled origins
+# if settings.all_cors_origins:
+#     app.add_middleware(
+#         CORSMiddleware,
+#         allow_origins=settings.all_cors_origins,
+#         allow_credentials=True,
+#         allow_methods=["*"],
+#         allow_headers=["*"],
+#     )
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+# Include the API router
+app.include_router(router, prefix=settings.API_V1_STR)
