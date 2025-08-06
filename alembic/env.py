@@ -21,6 +21,8 @@ from sqlmodel import SQLModel
 from app.models.user_role import User, UserRoleLink, Role
 from app.models.category import Category
 from app.models.menu import Menu
+from app.models.order import OrderBase
+from app.models.order_detail import OrderDetail
 
 # This is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
