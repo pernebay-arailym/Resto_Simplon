@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     last_name: str = Field(None, max_length=50)
     adresse: str = Field(None)
     phone: str = Field(None, max_length=30)
-    roles: list[Role]
+    roles: list[Role] | None
 
 
 class UserCreate(BaseModel):
