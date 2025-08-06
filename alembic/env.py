@@ -18,6 +18,7 @@ from sqlmodel import SQLModel
 
 # Ceci est l'endroit où vous importez vos modèles
 # par exemple, si vos modèles sont dans un fichier "models.py" dans le répertoire "app"
+from app.models.user_role import User, UserRoleLink, Role
 from app.models.category import Category
 from app.models.menu import Menu
 
