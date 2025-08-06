@@ -1,4 +1,3 @@
-from __future__ import annotations  # essai pour éviter les références circulaires
 from contextlib import asynccontextmanager
 from typing import Union
 from fastapi import FastAPI
