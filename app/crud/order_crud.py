@@ -30,7 +30,7 @@ def get_order(session: Session, order_id: int) -> OrderBase:
     """
     db_order = session.get(OrderBase, order_id)
     if not db_order:
-        raise ValueError("Order not found")
+        return None
     return db_order
 
 
@@ -75,7 +75,7 @@ def update_order(
     """
     db_order = session.get(OrderBase, order_id)
     if not db_order:
-        raise ValueError("Order not found")
+        return None
 
     order_data = order_update.model_dump(exclude_unset=True)
     for key, value in order_data.items():
@@ -98,7 +98,7 @@ def delete_order(session: Session, order_id: int) -> None:
     """
     db_order = session.get(OrderBase, order_id)
     if not db_order:
-        raise ValueError("Order not found")
+        return None
 
     session.delete(db_order)
     session.commit()
