@@ -1,11 +1,11 @@
-from app.models.order_detail import OrderDetailBase
+from app.models.order_detail import OrderDetail
 from app.schemas.order_detail_schema import OrderDetailCreate, OrderDetailUpdate
 from sqlmodel import Session, select
 
 
 def create_order_detail(
     session: Session, order_detail: OrderDetailCreate
-) -> OrderDetailBase:
+) -> OrderDetail:
     """
     Create a new order detail in the databas
     Args:
@@ -14,14 +14,14 @@ def create_order_detail(
     Returns:
         Order detail: The created order detail.
     """
-    db_order_detail = OrderDetailBase.model_validate(order_detail)
+    db_order_detail = OrderDetail.model_validate(order_detail)
     session.add(db_order_detail)
     session.commit()
     session.refresh(db_order_detail)
     return db_order_detail
 
 
-def get_order_detail(session: Session, order_detail_id: int) -> OrderDetailBase:
+def get_order_detail(session: Session, order_detail_id: int) -> OrderDetail:
     """
     Retrieve an order detail by ID from the database.
     Args:
@@ -30,13 +30,13 @@ def get_order_detail(session: Session, order_detail_id: int) -> OrderDetailBase:
     Returns:
         Order detail: The order detail object if found, otherwise raises ValueError.
     """
-    db_order_detail = session.get(OrderDetailBase, order_detail_id)
+    db_order_detail = session.get(OrderDetail, order_detail_id)
     if not db_order_detail:
         return None
     return db_order_detail
 
 
-def get_all_order_details(session: Session) -> list[OrderDetailBase]:
+def get_all_order_details(session: Session) -> list[OrderDetail]:
     """
     Retrieve all order details from the database.
     Args:
@@ -44,11 +44,11 @@ def get_all_order_details(session: Session) -> list[OrderDetailBase]:
     Returns:
         list[Order detail]: A list of all order detail objects.
     """
-    statement = select(OrderDetailBase)
+    statement = select(OrderDetail)
     return session.exec(statement).all()
 
 
-def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDetailBase:
+def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDetail:
     """
     Retrieve a order detail by its title from the database.
     Args:
@@ -57,7 +57,7 @@ def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDeta
     Returns:
         Order detail: The order detail object if found, otherwise raises ValueError.
     """
-    statement = select(OrderDetailBase).where(OrderDetailBase.client_id == client_id)
+    statement = select(OrderDetail).where(OrderDetail.client_id == client_id)
     db_order_detail = session.exec(
         statement
     ).first()  # TODO we get only the first order with the client_id
@@ -66,7 +66,7 @@ def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDeta
 
 def update_order_detail(
     session: Session, order_detail_id: int, order_detail_update: OrderDetailUpdate
-) -> OrderDetailBase:
+) -> OrderDetail:
     """
     Update an existing order detail in the database.
     Args:
@@ -75,7 +75,7 @@ def update_order_detail(
     Returns:
         Order detail: The updated order detail object.
     """
-    db_order_detail = session.get(OrderDetailBase, order_detail_id)
+    db_order_detail = session.get(OrderDetail, order_detail_id)
     if not db_order_detail:
         return None
 
@@ -98,7 +98,7 @@ def delete_order_detail(session: Session, order_detail_id: int) -> None:
     Raises:
         ValueError: If the order detail with the given ID does not exist.
     """
-    db_order_detail = session.get(OrderDetailBase, order_detail_id)
+    db_order_detail = session.get(OrderDetail, order_detail_id)
     if not db_order_detail:
         return None
 
