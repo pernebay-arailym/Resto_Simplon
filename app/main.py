@@ -1,3 +1,7 @@
+import sys, os
+# Ajoute le répertoire parent au chemin pour l'importation des modules
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from contextlib import asynccontextmanager
 from typing import Union
 from fastapi import FastAPI
@@ -44,3 +48,40 @@ app = FastAPI(lifespan=lifespan)
 
 # Include the API router
 app.include_router(router, prefix=settings.API_V1_STR)
+
+
+if __name__ == "__main__":
+    # crée deux roles par défaut dans la BDD
+    from app.core.database import create_db_and_tables
+    create_db_and_tables()
+
+    from app.crud.role_crud import create_role, get_all_roles
+    from app.models.user_role import RoleType
+    from app.schemas.role_schema import RoleCreate
+    from app.core.database import get_session
+    session = next(get_session())
+    print("Création des rôles par défaut...")
+
+    # Création des rôles par défaut seulement si aucun rôle n'existe
+    existing_roles = get_all_roles(session)
+    if not existing_roles:
+        role_admin = RoleCreate(
+            role_type=RoleType.admin,
+            name="Administrator",
+            description="Administrator role with full access"
+        )
+        create_role(session, role_admin)
+
+        role_customer = RoleCreate(
+            role_type=RoleType.customer,
+            name="customer",
+            description="Regular customer role with limited access"
+        )
+        create_role(session, role_customer)
+        print("Rôles par défaut créés.")
+    else:
+        print("Les rôles existent déjà en base, aucune création nécessaire.")
+
+    # lance l'application FastAPI
+    import uvicorn
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8050, log_level="info", reload=True)

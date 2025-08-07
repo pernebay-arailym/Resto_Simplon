@@ -15,17 +15,12 @@ def get_all_users(*, session: SessionDep) -> List[UserPublic]:
 
 @router.post("/", response_model=UserPublic)
 def create_user(*, session: SessionDep, user_schema_in: UserCreate):
-    existing_user_model = user_crud.get_user_by_email(
-        session=session, email=user_schema_in.email
-    )
-    if existing_user_model:
-        raise HTTPException(
-            status_code=400,
-            detail="A user already exists with this email.",
-        )
-    # print(user_schema_in.roles)
-    user_model = user_crud.create_user(session=session, user_schema=user_schema_in)
-    return user_model
+    existing_user = user_crud.get_user_by_email(session, user_schema_in.email)
+    if existing_user:
+        raise HTTPException(status_code=400, detail="A user already exists with this email.")
+
+    created_user = user_crud.create_user(session, user_schema_in)
+    return created_user
 
 
 @router.get("/{user_id}", response_model=UserPublic)

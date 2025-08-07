@@ -4,9 +4,6 @@ from sqlmodel import Session, select
 
 
 def create_user(session: Session, user_schema: UserCreate) -> User:
-    print(f"user_schema: {user_schema}")
-
-    roles = [session.get(Role, user_schema.roles[0])]
     new_user = User(
         username=user_schema.username,
         email=user_schema.email,
@@ -14,13 +11,15 @@ def create_user(session: Session, user_schema: UserCreate) -> User:
         last_name=user_schema.last_name,
         adresse=user_schema.adresse,
         phone=user_schema.phone,
-        roles=roles,
         password_hash=user_schema.password_hash,
     )
 
-    #    user_model = User.model_validate(new_user)
-    session.add(new_user)
+    roles = session.exec(select(Role).where(Role.id.in_(user_schema.role_ids))).all()
+    if len(roles) != len(user_schema.role_ids):
+        raise ValueError("Un ou plusieurs role_ids sont invalides")
 
+    new_user.roles = roles
+    session.add(new_user)
     session.commit()
     session.refresh(new_user)
     return new_user
