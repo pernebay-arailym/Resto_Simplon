@@ -7,6 +7,11 @@ from app.crud import user_crud
 router = APIRouter(tags=["Users"])
 
 
+@router.get("/", response_model=list[UserPublic])
+def get_all_users(*, session: SessionDep)-> list[UserPublic]:
+    return user_crud.get_all_users()
+
+
 @router.post("/", response_model=UserPublic)
 def create_user(*, session: SessionDep, user_schema_in: UserCreate):
     existing_user_model = user_crud.get_user_by_email(
