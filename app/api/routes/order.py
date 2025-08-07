@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.order_schema import OrderCreate, OrderPublic
+from app.schemas.order_schema import OrderCreate, OrderPublic, OrderUpdate
 from app.crud import order_crud
 
 router = APIRouter(tags=["order"])
@@ -35,7 +35,7 @@ def get_order(*, session: SessionDep, order_id: int):
 
     Args:
         session (SessionDep): The database session dependency.
-        order_id (uuid.UUID): The ID of the order to retrieve.
+        order_id (int): The ID of the order to retrieve.
 
     Raises:
         HTTPException: If the order is not found.
@@ -51,13 +51,13 @@ def get_order(*, session: SessionDep, order_id: int):
 
 
 @router.put("/{order_id}", response_model=dict)
-def update_order(*, session: SessionDep, order_id: int, order_in: OrderCreate):
+def update_order(*, session: SessionDep, order_id: int, order_in: OrderUpdate):
     """
     Update an order by ID.
 
     Args:
         session (SessionDep): The database session dependency.
-        order_id (uuid.UUID): The ID of the order to update.
+        order_id (int): The ID of the order to update.
         order_in (OrderCreate): The order update data.
 
     Raises:
@@ -86,7 +86,7 @@ def delete_order(*, session: SessionDep, order_id: int):
 
     Args:
         session (SessionDep): The database session dependency.
-        order_id (uuid.UUID): The ID of the order to delete.
+        order_id (int): The ID of the order to delete.
 
     Raises:
         HTTPException: If the order is not found.
