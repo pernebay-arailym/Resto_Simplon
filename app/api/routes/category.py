@@ -1,9 +1,28 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.category_schema import CategoryCreate, CategoryPublic
+from app.schemas.category_schema import CategoryCreate, CategoryPublic, CategoryUpdate
 from app.crud import category_crud
+from typing import List
 
-router = APIRouter(tags=["categories"])
+router = APIRouter(tags=["Categories"])
+
+
+@router.get("/", response_model=List[CategoryPublic])
+def get_all_categories(*, session: SessionDep):
+    """
+    Get all categories.
+
+    Args:
+        session (SessionDep): The database session dependency.
+        category_id (int): The ID of the category to retrieve.
+
+    Raises:
+        HTTPException: If the category is not found.
+
+    Returns:
+        CategoryPublic: The retrieved category data.
+    """
+    return category_crud.get_all_categories(session=session)
 
 
 @router.post("/", response_model=CategoryPublic)
@@ -63,7 +82,7 @@ def get_category_by_id(*, session: SessionDep, category_id: int):
 
 @router.put("/{category_id}", response_model=dict)
 def update_category(
-    *, session: SessionDep, category_id: int, category_in: CategoryCreate
+    *, session: SessionDep, category_id: int, category_in: CategoryUpdate
 ):
     """
     Update a category by ID.
