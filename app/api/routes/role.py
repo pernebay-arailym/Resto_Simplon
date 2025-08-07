@@ -9,19 +9,19 @@ router = APIRouter(tags=["Roles"])
 
 @router.get("/", response_model=list[RolePublic])
 def get_all_roles(*, session: SessionDep) -> list[RolePublic]:
-    return role_crud.get_all_roles()
+    return role_crud.get_all_roles(session=session)
 
 
 @router.post("/", response_model=RolePublic)
 def create_role(*, session: SessionDep, role_schema_in: RoleCreate):
-    existing_role_model = role_crud.get_role_by_role_type(
-        session=session, role_type=role_schema_in.role_type
-    )
-    if existing_role_model:
-        raise HTTPException(
-            status_code=400,
-            detail="A role already exists with this role type.",
-        )
+    # existing_role_model = role_crud.get_role_by_role_type(
+    #     session=session, role_type=role_schema_in.role_type
+    # )
+    # if existing_role_model:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail="A role already exists with this role type.",
+    #     )
     role_model = role_crud.create_role(session=session, role_schema=role_schema_in)
     return role_model
 
