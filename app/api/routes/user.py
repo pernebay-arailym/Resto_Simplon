@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
 from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic
@@ -7,9 +8,9 @@ from app.crud import user_crud
 router = APIRouter(tags=["Users"])
 
 
-@router.get("/", response_model=list[UserPublic])
-def get_all_users(*, session: SessionDep)-> list[UserPublic]:
-    return user_crud.get_all_users()
+@router.get("/", response_model=List[UserPublic])
+def get_all_users(*, session: SessionDep)-> List[UserPublic]:
+    return user_crud.get_all_users(session=session)
 
 
 @router.post("/", response_model=UserPublic)
