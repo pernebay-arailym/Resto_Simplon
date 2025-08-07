@@ -19,7 +19,7 @@ def create_category(session: Session, category: CategoryCreate) -> Category:
     return db_category
 
 
-def get_category_by_id(session: Session, category_id: int) -> Category:
+def get_category_by_id(session: Session, category_id: int) -> Category | None:
     """
     Retrieve a category by ID from the database.
     Args:
@@ -30,7 +30,7 @@ def get_category_by_id(session: Session, category_id: int) -> Category:
     """
     db_category = session.get(Category, category_id)
     if not db_category:
-        raise ValueError("Category not found")
+        return None
     return db_category
 
 
@@ -62,7 +62,7 @@ def get_category_by_name(session: Session, name: str) -> Category:
 
 def update_category(
     session: Session, category_id: int, category_update: CategoryUpdate
-) -> Category:
+) -> Category | None:
     """
     Update an existing category in the database.
     Args:
@@ -74,7 +74,7 @@ def update_category(
     """
     db_category = session.get(Category, category_id)
     if not db_category:
-        raise ValueError("Category not found")
+        return None
 
     category_data = category_update.model_dump(exclude_unset=True)
     for key, value in category_data.items():
@@ -97,7 +97,7 @@ def delete_category(session: Session, category_id: int) -> None:
     """
     db_category = session.get(Category, category_id)
     if not db_category:
-        raise ValueError("Category not found")
+        return None
 
     session.delete(db_category)
     session.commit()
