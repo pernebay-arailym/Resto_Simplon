@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.user_schema import UserCreate, UserPublic
+from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic
 from app.api.deps import SessionDep
 from app.crud import user_crud
 
@@ -30,7 +30,7 @@ def get_user_by_id(*, session: SessionDep, user_id: int):
 
 
 @router.put("/{user_id}", response_model=dict)
-def update_user(*, session: SessionDep, user_id: int, user_in: UserCreate):
+def update_user(*, session: SessionDep, user_id: int, user_in: UserUpdate):
     user_model = user_crud.get_user_by_id(session=session, user_id=user_id)
     if not user_model:
         raise HTTPException(status_code=404, detail="User not found")
