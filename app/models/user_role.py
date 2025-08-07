@@ -23,7 +23,7 @@ class User(SQLModel, table=True):
     last_name: str = Field(..., max_length=50)
     adresse: str = Field(...)
     phone: str = Field(..., max_length=30)
-    roles: list["Role"] = Relationship(back_populates="user", link_model=UserRoleLink)
+    roles: list["Role"] = Relationship(back_populates="users", link_model=UserRoleLink)
 
 
 class RoleType(str, Enum):
@@ -40,4 +40,4 @@ class Role(SQLModel, table=True):
         # unique=True,
         sa_column=sa.Column(sa.Enum(RoleType, name="role_type", create_type=True)),
     )  # RoleEnum
-    users: list[User] = Relationship(back_populates="role", link_model=UserRoleLink)
+    users: list[User] = Relationship(back_populates="roles", link_model=UserRoleLink)

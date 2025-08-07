@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.menu_schema import MenuCreate, MenuPublic
+from app.schemas.menu_schema import MenuCreate, MenuPublic, MenuUpdate
 from app.crud import menu_crud
+from typing import List
 
-router = APIRouter(tags=["menus"])
+router = APIRouter(tags=["Menus"])
 
 
 @router.post("/", response_model=MenuPublic)
@@ -35,6 +36,24 @@ def create_menu(*, session: SessionDep, menu_in: MenuCreate):
     return menu
 
 
+@router.get("/", response_model=List[MenuPublic])
+def get_all_menus(*, session: SessionDep):
+    """
+    Get all menus.
+
+    Args:
+        session (SessionDep): The database session dependency.
+        menu_id (int): The ID of the menu to retrieve.
+
+    Raises:
+        HTTPException: If the menu is not found.
+
+    Returns:
+        MenuPublic: The retrieved menu data.
+    """
+    return menu_crud.get_all_menus(session=session)
+
+
 @router.get("/{menu_id}", response_model=MenuPublic)
 def get_menu_by_id(*, session: SessionDep, menu_id: int):
     """
@@ -58,7 +77,7 @@ def get_menu_by_id(*, session: SessionDep, menu_id: int):
 
 
 @router.put("/{menu_id}", response_model=dict)
-def update_menu(*, session: SessionDep, menu_id: int, menu_in: MenuCreate):
+def update_menu(*, session: SessionDep, menu_id: int, menu_in: MenuUpdate):
     """
     Update a menu by ID.
 
