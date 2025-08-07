@@ -27,17 +27,13 @@ class User(SQLModel, table=True):
 
 
 class RoleType(str, Enum):
-    admin = "ADMIN"
-    employee = "EMPLOYEE"
-    customer = "CUSTOMER"
+    admin = "admin"
+    employee = "employee"
+    customer = "customer"
 
 
 class Role(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     # TODO: Pourquoi il est impossible de mettre unique=True si on utilise un type énuméré ?
-    role_type: RoleType = Field(
-        ...,
-        # unique=True,
-        sa_column=sa.Column(sa.Enum(RoleType, name="role_type", create_type=True)),
-    )  # RoleEnum
+    role_type: RoleType = Field(unique=True)
     users: list[User] = Relationship(back_populates="roles", link_model=UserRoleLink)
