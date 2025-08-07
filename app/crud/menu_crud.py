@@ -19,7 +19,7 @@ def create_menu(session: Session, menu: MenuCreate) -> Menu:
     return db_menu
 
 
-def get_menu_by_id(session: Session, menu_id: int) -> Menu | None:
+def get_menu_by_id(session: Session, menu_id: int) -> Menu:
     """
     Retrieve a menu by ID from the database.
     Args:
@@ -46,7 +46,7 @@ def get_all_menus(session: Session) -> list[Menu]:
     return session.exec(statement).all()
 
 
-def get_menu_by_name(session: Session, name: str) -> Menu | None:
+def get_menu_by_name(session: Session, name: str) -> Menu:
     """
     Retrieve a menu by its title from the database.
     Args:

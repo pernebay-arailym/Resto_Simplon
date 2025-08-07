@@ -2,8 +2,9 @@ from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
 from app.schemas.order_schema import OrderCreate, OrderPublic, OrderUpdate
 from app.crud import order_crud
+from typing import List
 
-router = APIRouter(tags=["order"])
+router = APIRouter(tags=["Order"])
 
 
 @router.post("/", response_model=OrderPublic)
@@ -48,6 +49,14 @@ def get_order(*, session: SessionDep, order_id: int):
         raise HTTPException(status_code=404, detail="Order not found")
 
     return order
+
+
+@router.get("/", response_model=List[OrderPublic])
+def get_all_orders(*, session: SessionDep):
+
+    # Get all order.
+
+    return order_crud.get_all_orders(session=session)
 
 
 @router.put("/{order_id}", response_model=dict)
