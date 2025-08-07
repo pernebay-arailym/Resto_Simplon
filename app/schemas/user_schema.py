@@ -20,7 +20,7 @@ class UserCreate(BaseModel):
     last_name: str = Field(..., max_length=50, nullable=False)
     adresse: str = Field(...)
     phone: str = Field(..., max_length=30)
-    roles: list[Role]
+    roles: list[int]
     password_hash: str = Field(..., nullable=False)
 
 
