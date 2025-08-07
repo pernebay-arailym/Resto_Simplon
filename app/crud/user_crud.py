@@ -11,11 +11,8 @@ def create_user(session: Session, user_schema: UserCreate) -> User:
     return user_model
 
 
-def get_user_by_id(session: Session, user_id: int) -> User:
-    user_model = session.get(User, user_id)
-    if not user_model:
-        raise ValueError("User not found")
-    return user_model
+def get_user_by_id(session: Session, user_id: int) -> User | None:
+    return session.get(User, user_id)
 
 
 def get_all_users(session: Session) -> list[User]:

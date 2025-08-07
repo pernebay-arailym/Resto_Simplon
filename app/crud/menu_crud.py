@@ -62,7 +62,7 @@ def get_menu_by_name(session: Session, name: str) -> Menu:
     return db_menu
 
 
-def update_menu(session: Session, menu_id: int, menu_update: MenuUpdate) -> Menu:
+def update_menu(session: Session, menu_id: int, menu_update: MenuUpdate) -> Menu | None:
     """
     Update an existing menu in the database.
     Args:
