@@ -76,7 +76,7 @@ def get_menu_by_id(*, session: SessionDep, menu_id: int):
     return menu
 
 
-@router.put("/{menu_id}", response_model=dict)
+@router.put("/{menu_id}", response_model=MenuPublic)
 def update_menu(*, session: SessionDep, menu_id: int, menu_in: MenuUpdate):
     """
     Update a menu by ID.
