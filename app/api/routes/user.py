@@ -1,8 +1,11 @@
 from typing import List
 from fastapi import APIRouter, HTTPException
+from sqlmodel import Session, select
 from app.api.deps import SessionDep
 from app.models.user_role import User
+from app.models.order import OrderBase
 from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic
+from app.schemas.order_schema import OrderPublic
 from app.crud import user_crud, role_crud
 
 router = APIRouter(tags=["Users"])
@@ -79,3 +82,8 @@ def delete_user(*, session: SessionDep, user_id: int):
 
     user_crud.delete_user(session, user_id=user_id)
     return {"detail": "User deleted successfully"}
+
+@router.get("/{user_id}/orders", response_model=List[OrderPublic])
+def get_all_orders_by_customer(*, session: SessionDep, user_id: int):
+    statement = select(OrderBase).where(OrderBase.client_id == user_id)
+    return session.exec(statement).all()

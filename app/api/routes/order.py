@@ -59,7 +59,7 @@ def get_all_orders(*, session: SessionDep):
     return order_crud.get_all_orders(session=session)
 
 
-@router.put("/{order_id}", response_model=dict)
+@router.put("/{order_id}", response_model=OrderPublic)
 def update_order(*, session: SessionDep, order_id: int, order_in: OrderUpdate):
     """
     Update an order by ID.
