@@ -42,7 +42,7 @@ def get_user_by_email(session: Session, email: str) -> User:
     return user_model
 
 
-def update_user(session: Session, user_id: int, user_update: UserUpdate) -> User:
+def update_user(session: Session, user_id: int, user_update: User) -> User:
     user_model = session.get(User, user_id)
     if not user_model:
         raise ValueError("User not found")
