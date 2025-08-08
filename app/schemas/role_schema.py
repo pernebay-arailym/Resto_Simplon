@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 import sqlalchemy as sa
 from app.models.user_role import RoleType
 
 
 class RoleBase(BaseModel):
-    role_type: RoleType = Field(...)  # Using the RoleType enum for status field
+    role_type: RoleType
 
 
 class RoleCreate(RoleBase):

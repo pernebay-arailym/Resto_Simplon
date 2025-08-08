@@ -1,32 +1,36 @@
 from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 from app.models.user_role import Role
+from typing import List, Optional
+from app.schemas.role_schema import RolePublic
 
 
 class UserBase(BaseModel):
-    username: str = Field(None, max_length=50)
-    email: EmailStr = Field(None, max_length=255)
-    first_name: str = Field(None, max_length=50)
-    last_name: str = Field(None, max_length=50)
-    adresse: str = Field(None)
-    phone: str = Field(None, max_length=30)
-    roles: list[Role] | None
-
-
-class UserCreate(BaseModel):
-    username: str = Field(..., max_length=50, nullable=False)
-    email: EmailStr = Field(..., max_length=255, nullable=False)
-    first_name: str = Field(..., max_length=50, nullable=False)
-    last_name: str = Field(..., max_length=50, nullable=False)
+    username: str = Field(..., max_length=50)
+    email: EmailStr = Field(..., max_length=255)
+    first_name: str = Field(..., max_length=50)
+    last_name: str = Field(..., max_length=50)
     adresse: str = Field(...)
     phone: str = Field(..., max_length=30)
-    roles: list[Role]
-    password_hash: str = Field(..., nullable=False)
 
 
-class UserUpdate(UserBase):
-    pass
+class UserCreate(UserBase):
+    password_hash: str = Field(..., min_length=8)
+    role_ids: List[int] = Field(..., min_items=1)
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = Field(None, max_length=50)
+    email: Optional[EmailStr] = Field(None, max_length=255)
+    first_name: Optional[str] = Field(None, max_length=50)
+    last_name: Optional[str] = Field(None, max_length=50)
+    adresse: Optional[str] = None
+    phone: Optional[str] = Field(None, max_length=30)
+    role_ids: Optional[List[int]] = Field(None)
 
 
 class UserPublic(UserCreate):
     id: int
+
+    class Config:
+        orm_mode = True
