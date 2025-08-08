@@ -14,3 +14,8 @@ router.include_router(menu.router, prefix="/menus")
 router.include_router(category.router, prefix="/categories")
 router.include_router(order.router, prefix="/orders")
 router.include_router(order_detail.router, prefix="/orderdetails")
+
+# Enfin, ce fichier relie toutes les routes de l’application :
+# les utilisateurs, les rôles, les menus, les catégories, les commandes et les détails de commandes.
+# Grâce à lui, FastAPI sait quelles routes utiliser et comment les regrouper.
+# On peut donc accéder à toutes les fonctionnalités de l’application depuis un seul point central.

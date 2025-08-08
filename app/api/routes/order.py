@@ -6,6 +6,9 @@ from typing import List
 
 router = APIRouter(tags=["Order"])
 
+# Ce fichier définit les points d’entrée API pour les commandes.
+# Ce sont les adresses que le client peut appeler :
+
 
 @router.post("/", response_model=OrderPublic)
 def create_order(*, session: SessionDep, order_in: OrderCreate):
@@ -111,3 +114,15 @@ def delete_order(*, session: SessionDep, order_id: int):
     order_crud.delete_order(session=session, order_id=order_id)
 
     return {"detail": "Order deleted successfully"}
+
+
+# Chaque route :
+
+# Reçoit la requête du client.
+
+# Vérifie les données avec les schémas.
+
+# Appelle la bonne fonction CRUD.
+
+# Renvoie le résultat.
+# C’est donc la porte d’entrée entre l’utilisateur et notre code.

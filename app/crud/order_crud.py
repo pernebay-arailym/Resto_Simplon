@@ -3,6 +3,7 @@ from app.schemas.order_schema import OrderCreate, OrderUpdate
 from sqlmodel import Session, select
 
 
+# Le fichier CRUD contient la logique métier, c’est-à-dire les fonctions qui parlent directement à la base de données.
 def create_order(session: Session, order: OrderCreate) -> OrderBase:
     """
     Create a new order in the databas
@@ -102,3 +103,7 @@ def delete_order(session: Session, order_id: int) -> None:
 
     session.delete(db_order)
     session.commit()
+
+
+# Ici, on ne s’occupe pas des requêtes HTTP, juste de manipuler les données.
+# C’est une couche intermédiaire entre la base et les routes.

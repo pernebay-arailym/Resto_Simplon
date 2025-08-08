@@ -4,6 +4,8 @@ from enum import Enum
 from datetime import datetime, timezone
 from app.models.order import OrderStatus
 
+# Les schémas servent à définir la forme exacte des données que notre API accepte ou renvoie.
+
 
 class OrderCreate(BaseModel):
     """
@@ -45,3 +47,6 @@ class OrderPublic(OrderCreate):
 
     class Config:
         orm_mode = True
+
+
+# Ces schémas sont comme des “contrats” : ils garantissent que les données respectent un format précis, ce qui rend l’API plus fiable.
