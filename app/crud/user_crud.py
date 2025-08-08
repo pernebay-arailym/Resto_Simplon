@@ -1,14 +1,30 @@
 from app.schemas.user_schema import UserCreate, UserUpdate
-from app.models.user_role import User
+from app.models.user_role import User, Role
 from sqlmodel import Session, select
+from app.auth.security import hash_password
 
 
 def create_user(session: Session, user_schema: UserCreate) -> User:
-    user_model = User.model_validate(user_schema)
-    session.add(user_model)
+    new_user = User(
+        username=user_schema.username,
+        email=user_schema.email,
+        first_name=user_schema.first_name,
+        last_name=user_schema.last_name,
+        adresse=user_schema.adresse,
+        phone=user_schema.phone,
+        password_hash=hash_password(user_schema.password_hash),
+    )
+
+    roles = session.exec(select(Role).where(Role.id.in_(user_schema.role_ids))).all()
+    if len(roles) != len(user_schema.role_ids):
+        raise ValueError("Un ou plusieurs role_ids sont invalides")
+
+    new_user.roles = roles
+    session.add(new_user)
+
     session.commit()
-    session.refresh(user_model)
-    return user_model
+    session.refresh(new_user)
+    return new_user
 
 
 def get_user_by_id(session: Session, user_id: int) -> User | None:
