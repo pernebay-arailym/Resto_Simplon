@@ -24,7 +24,7 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = Field(None, max_length=50)
     adresse: Optional[str] = None
     phone: Optional[str] = Field(None, max_length=30)
-    role_ids: List[int] = Field(..., min_items=1)
+    role_ids: Optional[List[int]] = Field(None)
 
 
 class UserPublic(UserBase):
