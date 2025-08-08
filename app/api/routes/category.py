@@ -80,7 +80,7 @@ def get_category_by_id(*, session: SessionDep, category_id: int):
     return category
 
 
-@router.put("/{category_id}", response_model=dict)
+@router.put("/{category_id}", response_model=CategoryPublic)
 def update_category(
     *, session: SessionDep, category_id: int, category_in: CategoryUpdate
 ):
