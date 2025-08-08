@@ -23,9 +23,8 @@ def create_order_detail(*, session: SessionDep, order_detail_in: OrderDetailCrea
     Returns:
         OrderPublic: The created order detail data.
     """
-
     order_detail = order_detail_crud.create_order_detail(
-        session=session, order=order_detail_in
+        session=session, order_detail=order_detail_in
     )
 
     return order_detail

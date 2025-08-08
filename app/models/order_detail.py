@@ -17,8 +17,8 @@ class OrderDetail(
     SQLModel, table=True
 ):  # OrderDetail links an Order to its MenuItems (many-to-many).
 
-    order_id: int = Field(..., primary_key=True)
-    detail_id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order_id: Optional[int] = Field(default=None, foreign_key="order.id")
     menu_id: int = Field(..., foreign_key="menu.id")
     price: float = Field(..., ge=0)
     comment: str = Field(default="", max_length=255)

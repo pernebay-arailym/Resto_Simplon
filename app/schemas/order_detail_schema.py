@@ -14,7 +14,6 @@ class OrderDetailCreate(BaseModel):
     """
 
     order_id: int = Field(...)
-    detail_id: Optional[int] = Field(...)
     menu_id: int = Field(...)
     status: OrderDetailStatus = Field(...)
     price: float = Field(..., ge=0)
@@ -31,7 +30,6 @@ class OrderDetailUpdate(BaseModel):
     """
 
     order_id: int = Field(None)
-    detail_id: Optional[int] = Field(None)
     menu_id: int = Field(None)
     status: OrderDetailStatus = Field(None)
     price: float = Field(None, ge=0)
@@ -47,8 +45,8 @@ class OrderDetailPublic(OrderDetailCreate):
         OrderDetailCreate (OrderDetailCreate): Base model for order detail creation.
     """
 
+    id: int
     order_id: int
-    detail_id: int
     menu_id: int
     status: OrderDetailStatus
     price: float
