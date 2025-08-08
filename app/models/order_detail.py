@@ -23,9 +23,4 @@ class OrderDetail(
     price: float = Field(..., ge=0)
     comment: str = Field(default="", max_length=255)
     quantity: int = Field(..., gt=0)
-    status: OrderDetailStatus = Field(
-        default=OrderDetailStatus.CREATED,
-        sa_column=sa.Column(
-            sa.Enum(OrderDetailStatus, name="order_detail_status", create_type=True)
-        ),
-    )  # Using the OrderStatus enum for status field
+    status: OrderDetailStatus = Field(...)
