@@ -1,5 +1,5 @@
 from app.schemas.role_schema import RoleCreate, RoleUpdate
-from app.models.user_role import Role, RoleType
+from app.models import Role, RoleType
 from sqlmodel import Session, select
 
 
