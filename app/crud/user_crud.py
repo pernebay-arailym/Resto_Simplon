@@ -1,5 +1,5 @@
 from app.schemas.user_schema import UserCreate, UserLogin, UserUpdate
-from app.models.user_role import User, Role
+from app.models import User, Role
 from sqlmodel import Session, select
 from app.auth.security import hash_password, verify_password
 

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
-from app.models.user_role import Role
+from app.models.role import Role
 from typing import List, Optional
 from app.schemas.role_schema import RolePublic
 

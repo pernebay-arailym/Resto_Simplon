@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import sqlalchemy as sa
-from app.models.user_role import RoleType
+from app.models.role import RoleType
 
 
 class RoleBase(BaseModel):

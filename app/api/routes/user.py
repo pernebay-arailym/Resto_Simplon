@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 from app.api.deps import SessionDep
 from app.auth.auth_handler import signJWT
-from app.models.user_role import User
+from app.models.user import User
 from app.models.order import OrderBase
 from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic, UserLogin
 from app.schemas.order_schema import OrderPublic
