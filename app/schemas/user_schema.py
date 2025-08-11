@@ -29,7 +29,12 @@ class UserUpdate(BaseModel):
     role_ids: Optional[List[int]] = Field(None)
 
 
-class UserPublic(UserCreate):
+class UserLogin(BaseModel):
+    email: EmailStr = Field(...)
+    password_hash: str = Field(...)
+
+
+class UserPublic(UserBase):
     id: int
 
     class Config:

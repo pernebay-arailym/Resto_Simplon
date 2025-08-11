@@ -1,7 +1,7 @@
-from app.schemas.user_schema import UserCreate, UserUpdate
+from app.schemas.user_schema import UserCreate, UserLogin, UserUpdate
 from app.models import User, Role
 from sqlmodel import Session, select
-from app.auth.security import hash_password
+from app.auth.security import hash_password, verify_password
 
 
 def create_user(session: Session, user_schema: UserCreate) -> User:
@@ -64,3 +64,13 @@ def delete_user(session: Session, user_id: int) -> None:
 
     session.delete(user_model)
     session.commit()
+
+
+def check_user(session: Session, user_schema: UserLogin):
+    user = get_user_by_email(session, user_schema.email)
+
+    if user.email == user_schema.email and verify_password(
+        user.password_hash, user_schema.password_hash
+    ):
+        return True
+    return False
