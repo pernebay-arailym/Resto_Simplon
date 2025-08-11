@@ -1,5 +1,4 @@
 from sqlmodel import Session, create_engine
-from app.models.user_role import UserRoleLink, User, Role
 from app.core.config import settings
 
 # L'engine de la base de données
