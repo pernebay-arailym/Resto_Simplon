@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Dict
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
+from app.auth.auth_handler import signJWT
 from app.models.user_role import User
-from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic
+from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic, UserLogin
 from app.crud import user_crud, role_crud
 
 router = APIRouter(tags=["Users"])
@@ -28,6 +29,27 @@ def userupdate_to_user(
 def get_all_users(*, session: SessionDep) -> List[UserPublic]:
     users = user_crud.get_all_users(session=session)
     return [user_to_userpublic(user) for user in users]
+
+
+@router.post("/signup", response_model=Dict[str, str])
+def signup_user(*, session: SessionDep, user_schema_in: UserCreate):
+    existing_user = user_crud.get_user_by_email(session, user_schema_in.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=400, detail="A user already exists with this email."
+        )
+
+    created_user = user_crud.create_user(session, user_schema_in)
+    user_email = user_to_userpublic(created_user).email
+    mondict = signJWT(user_email)
+    return mondict
+
+
+@router.post("/login", response_model=Dict[str, str])
+def login_user(*, session: SessionDep, user_schema_in: UserLogin):
+    if user_crud.check_user(session, user_schema_in):
+        return signJWT(user_schema_in.email)
+    return {"error": "Wrong login details!"}
 
 
 @router.post("/", response_model=UserPublic)
