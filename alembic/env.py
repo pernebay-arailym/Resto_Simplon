@@ -6,12 +6,8 @@ from sqlalchemy import pool
 import sqlmodel
 
 from alembic import context
+from app.core.config import settings
 
-# Ajoutez ces imports pour charger le fichier .env
-from dotenv import load_dotenv
-
-# Chargez le fichier .env
-load_dotenv()
 
 # Ceci est le MetaData de SQLModel
 from sqlmodel import SQLModel
@@ -74,8 +70,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-    # Utilisez la variable d'environnement pour la chaîne de connexion
-    connectable = create_engine(os.getenv("DATABASE_URL"))
+    connectable = create_engine(settings.DATABASE_URL)
 
     with connectable.connect() as connection:
         context.configure(
