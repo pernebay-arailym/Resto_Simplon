@@ -1,0 +1,39 @@
+services:
+
+  api:
+    build:
+      context: .  # Contexte de construction à la racine du projet
+      dockerfile: ./fastapi_image/Dockerfile
+    restart: always
+    ports:
+      - "8080:8000"
+    depends_on:
+       - psql
+
+  psql:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - psql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8081:80"
+    depends_on:
+      - psql
+    volumes:
+      - ./config_pgadmin.json:/pgadmin4/servers.json
+
+volumes:
+  psql_data:
