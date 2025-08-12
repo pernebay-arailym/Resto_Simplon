@@ -5,7 +5,7 @@
       "Group": "Docker Servers",
       "Port": 5432,
       "Username": "utilisateur_fastapi",
-      "Host": "psql",
+      "Host": "psql_prod",
       "SSLMode": "prefer",
       "MaintenanceDB": "resto_simplon"
     }
