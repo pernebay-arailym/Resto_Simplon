@@ -1,22 +1,5 @@
 services:
 
-  api:
-    build:
-      context: .  # Contexte de construction à la racine du projet
-      dockerfile: ./fastapi_image/Dockerfile
-    restart: always
-    ports:
-      - "8080:8000"
-    depends_on:
-       - psql
-    environment:
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
-      - DATABASE_URL=${DATABASE_URL}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-
   psql:
     image: postgres:14
     restart: always
@@ -34,6 +17,40 @@ services:
       timeout: 5s
       retries: 5
 
+  alembic:
+    build:
+      context: .  # Contexte de construction à la racine du projet
+      dockerfile: ./alembic_image/Dockerfile
+    restart: no
+    depends_on:
+      psql:
+        condition: service_healthy
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  api:
+    build:
+      context: .  # Contexte de construction à la racine du projet
+      dockerfile: ./fastapi_image/Dockerfile
+    restart: always
+    ports:
+      - "8080:8000"
+    depends_on:
+      psql:
+        condition: service_healthy
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -43,7 +60,8 @@ services:
     ports:
       - "8081:80"
     depends_on:
-      - psql
+      psql:
+        condition: service_healthy
     volumes:
       - ./config_pgadmin.json:/pgadmin4/servers.json
 
