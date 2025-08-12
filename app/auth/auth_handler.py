@@ -4,6 +4,9 @@ import os
 import jwt
 from app.core.config import settings
 
+JWT_SECRET = settings.JWT_SECRET
+JWT_ALGORITHM = settings.JWT_ALGORITHM
+
 
 def token_response(token: str):
     return {"access_token": token}

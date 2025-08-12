@@ -8,6 +8,9 @@ import sqlmodel
 from alembic import context
 from app.core.config import settings
 
+# Env vars are loaded from docker for now
+# from dotenv import load_dotenv
+# load_dotenv()
 
 # Ceci est le MetaData de SQLModel
 from sqlmodel import SQLModel
@@ -70,6 +73,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
+    # Utilisez la variable d'environnement pour la chaîne de connexion
     connectable = create_engine(settings.DATABASE_URL)
 
     with connectable.connect() as connection:
