@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 import os
 import jwt
 from app.core.config import settings
@@ -12,16 +12,10 @@ def token_response(token: str):
     return {"access_token": token}
 
 
-def signJWT(user_id: str) -> Dict[str, str]:
-    payload = {"user_id": user_id, "exp": time.time() + 900}
-    token = jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+def signJWT(user_id: str, user_roles: List[str]) -> Dict[str, str]:
+    payload = {"user_id": user_id, "roles": user_roles, "exp": time.time() + 900}
+    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return token_response(token)
-
-
-# def signJWT(user_id: str, user_role: str) -> Dict[str, str]:
-#     payload = {"user_id": user_id, "user_role": user_role, "exp": time.time() + 900}
-#     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-#     return token_response(token)
 
 
 def decodeJWT(token: str) -> Optional[dict]:
@@ -32,16 +26,8 @@ def decodeJWT(token: str) -> Optional[dict]:
         )
         return decoded_token
     except jwt.ExpiredSignatureError:
-        # Cette erreur est affichée si le token a expiré (plus de 15 minutes)
-        print("Erreur de décodage : le token est expiré.")
         return None
     except jwt.InvalidTokenError:
-        # Cette erreur est affichée si la clé secrète ne correspond pas ou si le token est mal formé
-        print(
-            "Erreur de décodage : le token est invalide (signature incorrecte, etc.)."
-        )
         return None
     except Exception as e:
-        # Pour toute autre erreur inattendue
-        print(f"Erreur inattendue lors du décodage du JWT : {e}")
         return None
