@@ -207,3 +207,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+config_pgadmin_dev.json
+config_pgadmin_prod.json
