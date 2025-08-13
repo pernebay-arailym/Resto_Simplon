@@ -7,6 +7,7 @@ import sqlmodel
 
 from alembic import context
 from app.core.config import settings
+
 # Env vars are loaded from docker for now
 # from dotenv import load_dotenv
 # load_dotenv()
