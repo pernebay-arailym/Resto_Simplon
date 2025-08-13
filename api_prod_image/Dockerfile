@@ -1,6 +1,10 @@
 # Utilise une image Python
 FROM python:slim-bookworm
 
+RUN useradd -m app_user
+USER app_user
+ENV PATH="/home/app_user/.local/bin:${PATH}"
+
 # Définis le répertoire de travail dans le conteneur
 WORKDIR /app_base
 
