@@ -1,3 +1,6 @@
+from typing import List
+from app.models.order import OrderBase
+from app.schemas.order_schema import OrderPublic
 from app.schemas.user_schema import UserCreate, UserLogin, UserUpdate
 from app.models import User, Role
 from sqlmodel import Session, select
@@ -66,7 +69,7 @@ def delete_user(session: Session, user_id: int) -> None:
     session.commit()
 
 
-def check_user(session: Session, user_schema: UserLogin):
+def check_user(session: Session, user_schema: UserLogin) -> bool:
     user = get_user_by_email(session, user_schema.email)
 
     if user.email == user_schema.email and verify_password(
@@ -74,3 +77,8 @@ def check_user(session: Session, user_schema: UserLogin):
     ):
         return True
     return False
+
+
+def get_all_orders_by_customer(session: Session, user_id: int) -> List[OrderPublic]:
+    statement = select(OrderBase).where(OrderBase.client_id == user_id)
+    return session.exec(statement).all()

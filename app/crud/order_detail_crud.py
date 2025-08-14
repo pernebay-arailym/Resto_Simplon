@@ -1,3 +1,4 @@
+from typing import List
 from app.models.order_detail import OrderDetail
 from app.schemas.order_detail_schema import OrderDetailCreate, OrderDetailUpdate
 from sqlmodel import Session, select
@@ -104,3 +105,17 @@ def delete_order_detail(session: Session, order_detail_id: int) -> None:
 
     session.delete(db_order_detail)
     session.commit()
+
+
+def get_all_order_details_by_order(
+    session: Session, order_id: int
+) -> List[OrderDetail]:
+    """
+    Retrieve all order details of an order from the database.
+    Args:
+        session (Session): The database session.
+    Returns:
+        list[Order detail]: A list of all order details objects from an order.
+    """
+    statement = select(OrderDetail).where(OrderDetail.order_id == order_id)
+    return session.exec(statement).all()
