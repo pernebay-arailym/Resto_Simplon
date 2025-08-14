@@ -136,5 +136,4 @@ def delete_user(*, session: SessionDep, user_id: int):
 
 @router.get("/{user_id}/orders", response_model=List[OrderPublic])
 def get_all_orders_by_customer(*, session: SessionDep, user_id: int):
-    statement = select(OrderBase).where(OrderBase.client_id == user_id)
-    return session.exec(statement).all()
+    return user_crud.get_all_orders_by_customer(session, user_id)
