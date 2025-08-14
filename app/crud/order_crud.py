@@ -1,6 +1,8 @@
+from typing import List
 from app.models.order import OrderBase
 from app.schemas.order_schema import OrderCreate, OrderUpdate
 from sqlmodel import Session, select
+from datetime import date, datetime, time
 
 
 def create_order(session: Session, order: OrderCreate) -> OrderBase:
@@ -34,7 +36,7 @@ def get_order(session: Session, order_id: int) -> OrderBase:
     return db_order
 
 
-def get_all_orders(session: Session) -> list[OrderBase]:
+def get_all_orders(session: Session) -> List[OrderBase]:
     """
     Retrieve all orders from the database.
     Args:
@@ -60,6 +62,23 @@ def get_order_by_client_id(session: Session, client_id: int) -> OrderBase:
         statement
     ).first()  # TODO we get only the first order with the client_id
     return db_order
+
+
+def get_orders_by_date(session: Session, target_date: date) -> List[OrderBase]:
+    """
+    Retrieve all orders by their date from the database.
+    Args:
+        session (Session): The database session.
+        target_date(date): The date of the orders to retrieve.
+    Returns:
+        List[Order]: The order object if found, otherwise raises ValueError.
+    """
+    start_date = datetime.combine(target_date, time.min)
+    end_date = datetime.combine(target_date, time.max)
+    statement = select(OrderBase).where(
+        OrderBase.created_at.between(start_date, end_date)
+    )
+    return session.exec(statement).all()
 
 
 def update_order(
