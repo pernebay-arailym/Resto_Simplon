@@ -5,7 +5,13 @@ from app.api.deps import SessionDep
 from app.auth.auth_handler import signJWT
 from app.models.user import User
 from app.models.order import OrderBase
-from app.schemas.user_schema import UserCreate, UserUpdate, UserPublic, UserLogin
+from app.schemas.user_schema import (
+    UserCreate,
+    UserPublicCreate,
+    UserUpdate,
+    UserPublic,
+    UserLogin,
+)
 from app.schemas.order_schema import OrderPublic
 from app.crud import user_crud, role_crud
 from app.models.role import RoleType
@@ -52,12 +58,29 @@ def get_all_users(*, session: SessionDep) -> List[UserPublic]:
 
 
 @router.post("/signup", response_model=Dict[str, str])
-def signup_user(*, session: SessionDep, user_schema_in: UserCreate):
-    existing_user = user_crud.get_user_by_email(session, user_schema_in.email)
+def signup_user(*, session: SessionDep, user_schema_public_in: UserPublicCreate):
+    existing_user = user_crud.get_user_by_email(session, user_schema_public_in.email)
     if existing_user:
         raise HTTPException(
             status_code=400, detail="A user already exists with this email."
         )
+
+    # récupérer l'id du role "customer" pour l'affecter comme valeur par défaut
+    #  à un user qui passe par /signup pour s'inscrit
+    customer_role = role_crud.get_role_by_role_type(session, RoleType.customer)
+
+    # pour la création d'un "employee" ou d'un admin, il faut passer par la route /post
+    #  qui devrait être protégée APRES création d'un admin
+    user_schema_in = UserCreate(
+        username=user_schema_public_in.username,
+        email=user_schema_public_in.email,
+        first_name=user_schema_public_in.first_name,
+        last_name=user_schema_public_in.last_name,
+        adresse=user_schema_public_in.adresse,
+        phone=user_schema_public_in.phone,
+        password_hash=user_schema_public_in.password_hash,
+        role_ids=[customer_role.id],
+    )
 
     created_user = user_crud.create_user(session, user_schema_in)
     user_email = user_to_userpublic(created_user).email
@@ -136,5 +159,4 @@ def delete_user(*, session: SessionDep, user_id: int):
 
 @router.get("/{user_id}/orders", response_model=List[OrderPublic])
 def get_all_orders_by_customer(*, session: SessionDep, user_id: int):
-    statement = select(OrderBase).where(OrderBase.client_id == user_id)
-    return session.exec(statement).all()
+    return user_crud.get_all_orders_by_customer(session, user_id)

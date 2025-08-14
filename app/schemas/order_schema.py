@@ -38,7 +38,7 @@ class OrderPublic(OrderCreate):
     Args:
         OrderCreate (OrderCreate): Base model for order creation.
     """
-
+    id: int
     client_id: int
     total_price: float
     status: OrderStatus

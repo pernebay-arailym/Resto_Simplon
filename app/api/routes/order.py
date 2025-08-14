@@ -1,8 +1,12 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
+from sqlmodel import Session, select
 from app.schemas.order_schema import OrderCreate, OrderPublic, OrderUpdate
-from app.crud import order_crud
+from app.schemas.order_detail_schema import OrderDetailPublic
+from app.models.order_detail import OrderDetail
+from app.crud import order_crud, order_detail_crud
 from typing import List
+from datetime import date
 
 router = APIRouter(tags=["Order"])
 
@@ -111,3 +115,44 @@ def delete_order(*, session: SessionDep, order_id: int):
     order_crud.delete_order(session=session, order_id=order_id)
 
     return {"detail": "Order deleted successfully"}
+
+
+@router.get("/by_date/{year}/{month}/{day}", response_model=List[OrderPublic])
+def get_all_orders_by_date(*, session: SessionDep, year: int, month: int, day: int):
+    """
+    Get all orders by created_at date.
+
+    Args:
+        session (SessionDep): The database session dependency.
+        year (int): Date Year.
+        month (int): Date month.
+        day (int): Date day.
+
+    Raises:
+        HTTPException: If no order is found.
+
+    Returns:
+        OrderPublic: The retrieved orders data.
+    """
+    target_date = date(year, month, day)
+    return order_crud.get_orders_by_date(session, target_date)
+
+
+@router.get("/{order_id}/details", response_model=List[OrderDetailPublic])
+def get_all_order_details_by_order(*, session: SessionDep, order_id: int):
+    """
+    Get all orders by created_at date.
+
+    Args:
+        session (SessionDep): The database session dependency.
+        year (int): Date Year.
+        month (int): Date month.
+        day (int): Date day.
+
+    Raises:
+        HTTPException: If no order is found.
+
+    Returns:
+        OrderPublic: The retrieved orders data.
+    """
+    return order_detail_crud.get_all_order_details_by_order(session, order_id)

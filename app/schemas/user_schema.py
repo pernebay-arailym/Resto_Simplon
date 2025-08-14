@@ -19,6 +19,10 @@ class UserCreate(UserBase):
     role_ids: List[int] = Field(..., min_items=1)
 
 
+class UserPublicCreate(UserBase):
+    password_hash: str = Field(..., min_length=8)
+
+
 class UserUpdate(BaseModel):
     username: Optional[str] = Field(None, max_length=50)
     email: Optional[EmailStr] = Field(None, max_length=255)
