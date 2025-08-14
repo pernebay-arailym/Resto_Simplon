@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from typing import Dict, List, Optional
 import os
 import jwt
@@ -6,6 +7,7 @@ from app.core.config import settings
 
 JWT_SECRET = settings.JWT_SECRET
 JWT_ALGORITHM = settings.JWT_ALGORITHM
+JWT_TOKEN_EXPIRES = settings.JWT_TOKEN_EXPIRES
 
 
 def token_response(token: str):
@@ -13,7 +15,12 @@ def token_response(token: str):
 
 
 def signJWT(user_id: str, user_roles: List[str]) -> Dict[str, str]:
-    payload = {"user_id": user_id, "roles": user_roles, "exp": time.time() + 900}
+    payload = {
+        "user_id": user_id,
+        "roles": user_roles,
+        "expires_in": datetime.now() + JWT_TOKEN_EXPIRES,
+        "token_type": "bearer",
+    }
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return token_response(token)
 

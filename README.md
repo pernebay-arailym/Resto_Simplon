@@ -53,6 +53,7 @@ The .env.dev and .env.prod files must follow this structure :
 JWT_SECRET=miohuyytftyyiuygvyucdtyedxty
 # For JWT_ALGORITHM, keep the default value unless you know what you do…
 JWT_ALGORITHM=HS256
+JWT_TOKEN_EXPIRES=3600 # 3600 seconds
 POSTGRES_USER=db_user
 POSTGRES_DB=resto_simplon
 POSTGRES_PASSWORD=mypassword
