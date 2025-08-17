@@ -145,9 +145,7 @@ def get_all_order_details_by_order(*, session: SessionDep, order_id: int):
 
     Args:
         session (SessionDep): The database session dependency.
-        year (int): Date Year.
-        month (int): Date month.
-        day (int): Date day.
+        order_id (int): The ID of the order to get details.
 
     Raises:
         HTTPException: If no order is found.
@@ -156,3 +154,39 @@ def get_all_order_details_by_order(*, session: SessionDep, order_id: int):
         OrderPublic: The retrieved orders data.
     """
     return order_detail_crud.get_all_order_details_by_order(session, order_id)
+
+
+@router.get("/{order_id}/order_total", response_model=float)
+def get_order_total(*, session: SessionDep, order_id: int):
+    """
+    Get an order total price.
+
+    Args:
+        session (SessionDep): The database session dependency.
+        order_id (int): The ID of the order.
+
+    Raises:
+        HTTPException: If no order is found.
+
+    Returns:
+        float: The retrieved order total.
+    """
+    return order_crud.get_order_total(session, order_id)
+
+
+@router.get("/{order_id}/finalize_order", response_model=OrderPublic)
+def get_finalize_order(*, session: SessionDep, order_id: int):
+    """
+    "Finalize" an order (after lines being added, computes the total price and set status to PREPARING).
+
+    Args:
+        session (SessionDep): The database session dependency.
+        order_id (int): The ID of the order.
+
+    Raises:
+        HTTPException: If no order is found.
+
+    Returns:
+        OrderPublic: The updated order.
+    """
+    return order_crud.finalize_order(session, order_id)
