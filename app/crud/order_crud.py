@@ -1,6 +1,9 @@
 from typing import List
 from app.models.order import OrderBase
 from app.schemas.order_schema import OrderCreate, OrderUpdate
+from app.models.order import OrderStatus
+from app.models.order_detail import OrderDetailStatus
+from app.crud.order_detail_crud import get_all_order_details_by_order
 from sqlmodel import Session, select
 from datetime import date, datetime, time
 
@@ -121,3 +124,47 @@ def delete_order(session: Session, order_id: int) -> None:
 
     session.delete(db_order)
     session.commit()
+
+
+def get_order_total(session: Session, order_id: int) -> float:
+    """
+    Compute the order total price.
+    Args:
+        session (Session): The database session.
+        order_id (int): The ID of the order.
+    Raises:
+        ValueError: If the order with the given ID does not exist.
+    Returns:
+        float: The total price of the order.
+    """
+    # order = get_order(session, order_id)
+    order_details = get_all_order_details_by_order(session, order_id)
+    order_total = 0
+    for order_detail in order_details:
+        if order_detail.status is not OrderDetailStatus.CANCELLED:
+            order_total += order_detail.price * order_detail.quantity
+    return float(order_total)
+
+
+def finalize_order(session: Session, order_id: int) -> OrderBase:
+    """
+    Finalize an order.
+    Args:
+        session (Session): The database session.
+        order_id (int): The ID of the order to delete.
+    Raises:
+        ValueError: If the order with the given ID does not exist.
+    Returns:
+        OrderBase: The updated order object.
+    """
+    order = get_order(session, order_id)
+    # Finalize can only be made if the order is in status "created"
+    if order.status is OrderStatus.CREATED:
+        order_update = OrderUpdate(
+            client_id=order.client_id,
+            status=OrderStatus.PREPARING,
+            total_price=get_order_total(session, order_id),
+        )
+        update_order(session, order_id, order_update)
+        order = get_order(session, order_id)
+    return order
