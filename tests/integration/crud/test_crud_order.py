@@ -84,10 +84,10 @@ def test_get_all_orders(session: Session, sample_order):
     assert sample_order in orders
 
 
-#def test_get_order_by_client_id(session: Session, sample_order):
-    #order = get_order_by_client_id(session, sample_order.client_id)
-    #assert order.id == sample_order.id
-    #assert order.client_id == sample_order.client_id
+def test_get_order_by_client_id(session: Session, sample_order):
+    order = get_order_by_client_id(session, sample_order.client_id)
+    assert order.id == sample_order.id
+    assert order.client_id == sample_order.client_id
 
 
 #def test_get_orders_by_date(session: Session, sample_order):
