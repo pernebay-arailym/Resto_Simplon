@@ -106,7 +106,7 @@ def test_update_order(session: Session, sample_order):
     assert updated.status == OrderStatus.PREPARING
 
 
-#def test_delete_order(session: Session, sample_order):
-    #delete_order(session, sample_order.id)
-    #deleted = get_order(session, sample_order.id)
-    #assert deleted is None
+def test_delete_order(session: Session, sample_order):
+    delete_order(session, sample_order.id)
+    deleted = get_order(session, sample_order.id)
+    assert deleted is None
