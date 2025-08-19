@@ -13,38 +13,46 @@ from app.crud.order_crud import (
     delete_order,
 )
 
-DATABASE_URL = "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@psql_dev:5432/${POSTGRES_DB}"
-
-
-@pytest.fixture(scope="session")
-def engine():
-    """Create a Postgres engine for the test session."""
-    engine = create_engine(DATABASE_URL, echo=False)
-    SQLModel.metadata.drop_all(engine)  # clean slate
-    SQLModel.metadata.create_all(engine)
-    return engine
-
+from app.models.user import User  # assuming you have a User model
 
 @pytest.fixture
-def session(engine):
-    """Provide a fresh DB session for each test."""
-    with Session(engine) as session:
-        yield session
-        session.rollback()  # rollback anything not committed
-
+def sample_user(session):
+    user = User(
+        username="testuser",
+        email="test@example.com",
+        password_hash="hashedpassword",  # some dummy hash
+        first_name="Test",
+        last_name="User",
+        adresse="123 Test Street",
+        phone="1234567890"
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
 
 @pytest.fixture
-def sample_order(session):
-    """Insert a sample order into the DB."""
-    order_data = OrderCreate(client_id=1, total_price=100.0, status=OrderStatus.CREATED)
+def sample_order(session, sample_user):
+    order_data = OrderCreate(
+        client_id=sample_user.id,
+        total_price=100.0,
+        status=OrderStatus.CREATED
+    )
     order = create_order(session, order_data)
     return order
+
+#@pytest.fixture
+#def sample_order(session):
+    #"""Insert a sample order into the DB."""
+    #order_data = OrderCreate(client_id=1, total_price=100.0, status=OrderStatus.CREATED)
+    #order = create_order(session, order_data)
+    #return order
 
 
 # Tests
 
 
-def test_create_and_get_order(session):
+def test_create_and_get_order(session: Session):
     order_data = OrderCreate(client_id=1, total_price=50.0, status=OrderStatus.CREATED)
     order = create_order(session, order_data)
 
@@ -60,26 +68,26 @@ def test_create_and_get_order(session):
     assert fetched.client_id == 1
 
 
-def test_get_all_orders(session, sample_order):
+def test_get_all_orders(session: Session, sample_order):
     orders = get_all_orders(session)
     assert len(orders) >= 1
     assert orders[0].id == sample_order.id
 
 
-def test_get_order_by_client_id(session, sample_order):
+def test_get_order_by_client_id(session: Session, sample_order):
     order = get_order_by_client_id(session, sample_order.client_id)
     assert order.id == sample_order.id
     assert order.client_id == sample_order.client_id
 
 
-def test_get_orders_by_date(session, sample_order):
+def test_get_orders_by_date(session: Session, sample_order):
     today = date.today()
     orders = get_orders_by_date(session, today)
     assert len(orders) >= 1
     assert orders[0].id == sample_order.id
 
 
-def test_update_order(session, sample_order):
+def test_update_order(session: Session, sample_order):
     update_data = OrderUpdate(total_price=200.0, status=OrderStatus.PREPARING)
     updated = update_order(session, sample_order.id, update_data)
 
@@ -87,7 +95,7 @@ def test_update_order(session, sample_order):
     assert updated.status == OrderStatus.PREPARING
 
 
-def test_delete_order(session, sample_order):
+def test_delete_order(session: Session, sample_order):
     delete_order(session, sample_order.id)
     deleted = get_order(session, sample_order.id)
     assert deleted is None
