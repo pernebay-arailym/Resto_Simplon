@@ -1,7 +1,4 @@
-import time
-from datetime import datetime
 from typing import Dict, List, Optional
-import os
 import jwt
 from app.core.config import settings
 
@@ -36,5 +33,5 @@ def decodeJWT(token: str) -> Optional[dict]:
         return None
     except jwt.InvalidTokenError:
         return None
-    except Exception as e:
+    except Exception:
         return None

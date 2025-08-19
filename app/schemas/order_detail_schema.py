@@ -1,7 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import Optional
-from enum import Enum
-from datetime import datetime, timezone
 from app.models.order_detail import OrderDetailStatus
 
 

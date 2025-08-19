@@ -1,9 +1,7 @@
 from sqlmodel import SQLModel, Field
 from datetime import datetime, timezone
-from typing import Literal
 from typing import Optional
 from enum import Enum
-import sqlalchemy as sa
 
 
 class OrderStatus(str, Enum):  # Enum for order status to ensure valid values.
