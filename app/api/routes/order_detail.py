@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.order_detail_schema import OrderDetailCreate, OrderDetailPublic
+from app.schemas.order_detail_schema import (
+    OrderDetailCreate,
+    OrderDetailPublic,
+)
 from app.crud import order_detail_crud
 from typing import List
 
@@ -8,7 +11,9 @@ router = APIRouter(tags=["Order Detail"])
 
 
 @router.post("/", response_model=OrderDetailPublic)
-def create_order_detail(*, session: SessionDep, order_detail_in: OrderDetailCreate):
+def create_order_detail(
+    *, session: SessionDep, order_detail_in: OrderDetailCreate
+):
     """
     Create a new order detail.
 
@@ -64,7 +69,10 @@ def get_all_order_details(*, session: SessionDep):
 
 @router.put("/{order_detail_id}", response_model=dict)
 def update_order_detail(
-    *, session: SessionDep, order_detail_id: int, order_detail_in: OrderDetailCreate
+    *,
+    session: SessionDep,
+    order_detail_id: int,
+    order_detail_in: OrderDetailCreate,
 ):
     """
     Update an order detail by ID.
@@ -119,6 +127,8 @@ def delete_order_detail(*, session: SessionDep, order_detail_id: int):
     if not order_detail:
         raise HTTPException(status_code=404, detail="Order Detail not found")
 
-    order_detail_crud.delete_order(session=session, order_detail_id=order_detail_id)
+    order_detail_crud.delete_order(
+        session=session, order_detail_id=order_detail_id
+    )
 
     return {"detail": "Order Detail deleted successfully"}

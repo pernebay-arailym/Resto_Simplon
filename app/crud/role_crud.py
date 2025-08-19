@@ -26,7 +26,9 @@ def get_all_roles(session: Session) -> list[Role]:
     return session.exec(statement).all()
 
 
-def update_role(session: Session, role_id: int, role_update: RoleUpdate) -> Role:
+def update_role(
+    session: Session, role_id: int, role_update: RoleUpdate
+) -> Role:
     role_model = session.get(Role, role_id)
     if not role_model:
         raise ValueError("Role not found")

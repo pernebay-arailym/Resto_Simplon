@@ -19,6 +19,8 @@ class OrderBase(
     __tablename__ = "order"
     id: Optional[int] = Field(default=None, primary_key=True)
     client_id: int = Field(..., foreign_key="user.id")
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )
     total_price: float = Field(..., gt=0)
     status: OrderStatus = Field(...)

@@ -21,7 +21,9 @@ def create_role(*, session: SessionDep, role_schema_in: RoleCreate):
             status_code=400,
             detail="A role already exists with this role type.",
         )
-    role_model = role_crud.create_role(session=session, role_schema=role_schema_in)
+    role_model = role_crud.create_role(
+        session=session, role_schema=role_schema_in
+    )
     return role_model
 
 

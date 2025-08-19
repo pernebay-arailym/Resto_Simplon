@@ -18,4 +18,6 @@ class Menu(SQLModel, table=True):
     category_id: Optional[int] = Field(default=None, foreign_key="category.id")
     description: str = Field(..., max_length=255)
     stock: int = Field(default=0, ge=0)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc)
+    )

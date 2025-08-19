@@ -17,7 +17,9 @@ class User(SQLModel, table=True):
     last_name: str = Field(max_length=50, nullable=False)
     adresse: str = Field(nullable=False)
     phone: str = Field(max_length=30, nullable=False)
-    roles: List["Role"] = Relationship(back_populates="users", link_model=UserRoleLink)
+    roles: List["Role"] = Relationship(
+        back_populates="users", link_model=UserRoleLink
+    )
 
     # # test de relation User <> Role sans table intermédiaire
     # id: Optional[int] = Field(default=None, primary_key=True)

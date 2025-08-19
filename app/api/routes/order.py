@@ -116,7 +116,9 @@ def delete_order(*, session: SessionDep, order_id: int):
 
 
 @router.get("/by_date/{year}/{month}/{day}", response_model=List[OrderPublic])
-def get_all_orders_by_date(*, session: SessionDep, year: int, month: int, day: int):
+def get_all_orders_by_date(
+    *, session: SessionDep, year: int, month: int, day: int
+):
     """
     Get all orders by created_at date.
 
