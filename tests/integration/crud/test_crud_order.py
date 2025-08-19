@@ -90,9 +90,10 @@ def test_get_order_by_client_id(session: Session, sample_order):
     assert order.client_id == sample_order.client_id
 
 
-#def test_get_orders_by_date(session: Session, sample_order):
-    #today = date.today()
-    #orders = get_orders_by_date(session, today)
+def test_get_orders_by_date(session: Session, sample_order):
+    today = date.today()
+    orders = get_orders_by_date(session, today)
+    assert sample_order in orders
     #assert len(orders) >= 1
     #assert orders[0].id == sample_order.id
 
