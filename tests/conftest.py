@@ -1,27 +1,13 @@
 import pytest
+from typing import List
 from fastapi.testclient import TestClient
-from sqlmodel import Session, create_engine
+from sqlmodel import Session
 from app.main import app
-
-from pydantic_settings import BaseSettings
 from app.core.database import engine
-import os
 
 
-# Récupération de l'URL de la base de données de test à partir des variables d'environnement
-# C'est la ligne la plus importante. Vous devez vous assurer que cette variable est bien injectée.
-TEST_DATABASE_URL = os.getenv("DATABASE_URL")
-
-# Gère le cas où la variable n'est pas définie
-if not TEST_DATABASE_URL:
-    raise ValueError("TEST_DATABASE_URL is not set in environment variables.")
-
-
-@pytest.fixture(name="session")
-def session_fixture():
-    """
-    Fixture qui fournit une session de base de données pour chaque test.
-    """
+@pytest.fixture()
+def session():
     with Session(engine) as session:
         yield session
 
@@ -34,5 +20,23 @@ def client_test_fixture(session: Session):
 
     client_test = TestClient(app)
     yield client_test
-
     app.dependency_overrides.clear()
+
+
+def compare_object_to_dict(
+    an_object: any, a_dict: dict, properties_to_exclude: List[str] | None = None
+) -> bool:
+    if an_object is None:
+        assert False, "Object is None"
+    else:
+        if properties_to_exclude is None:
+            properties_to_exclude = []
+        for property in dir(an_object):
+            if (property in a_dict.keys()) and (property not in properties_to_exclude):
+                if getattr(an_object, property) != a_dict[property]:
+                    print(
+                        f"Property {property} should equal {a_dict[property]} but equals {getattr(an_object, property)}"
+                    )
+                    assert (
+                        False
+                    ), f"Property {property} should equal {a_dict[property]} but equals {getattr(an_object, property)}"
