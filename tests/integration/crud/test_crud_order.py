@@ -79,6 +79,9 @@ def test_create_and_get_order(session: Session, sample_user):
     #orders = get_all_orders(session)
     #assert len(orders) >= 1
    # assert orders[0].id == sample_order.id
+def test_get_all_orders(session: Session, sample_order):
+    orders = get_all_orders(session)
+    assert sample_order in orders
 
 
 #def test_get_order_by_client_id(session: Session, sample_order):
