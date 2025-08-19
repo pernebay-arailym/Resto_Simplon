@@ -25,38 +25,37 @@ def test_create_category(session: Session):
     """
     Tests the creation of a category.
     """
-    detest = "test"
-    # response = client_test.post("/api/v1/categories/", json={"name": detest})
+    name_test = "test"
 
-    category = CategoryCreate(name=detest)
+    category = CategoryCreate(name=name_test)
     categ_ = create_category(session, category)
-
-    # assert response.status_code == 200
-
-    # data = response.json()
 
     # Vérifiez que l'élément a bien été créé en base de données
     categ = session.get(Category, categ_.id)
-    assert categ.name == detest
+    assert categ.name == name_test
     assert categ.id is not None
-
     delete_category(session, categ.id)
 
-    # cat = session.get(Category, categ.id)
-    # assert cat is not None
-    # assert category.name == detest
+
+def test_get_category_by_id(session: Session, sample_category):
+    category = get_category_by_id(session, sample_category.id)
+    assert category.name == "category_test"
+    assert category.id == sample_category.id
+    delete_category(session, sample_category.id)
 
 
-def test_get_category_by_id(session: Session):
-    pass
+def test_get_all_categories(session: Session, sample_category):
+    categories = get_all_categories(session)
+    assert len(categories) >= 1
+    assert categories[len(categories) - 1].name == sample_category.name
+    delete_category(session, sample_category.id)
 
 
-def test_get_all_categories(session: Session):
-    pass
-
-
-def test_get_category_by_name():
-    pass
+def test_get_category_by_name(session: Session, sample_category):
+    category = get_category_by_name(session, sample_category.name)
+    assert category.name == "category_test"
+    assert category.id == sample_category.id
+    delete_category(session, sample_category.id)
 
 
 def test_update_category():
