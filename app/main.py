@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-from typing import Union
 from fastapi import FastAPI
 from app.api.main import router
 from app.core.config import settings

@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-import sqlalchemy as sa
 from app.models.role import RoleType
 
 
