@@ -32,7 +32,8 @@ def get_order_detail(session: Session, order_detail_id: int) -> OrderDetail:
         session (Session): The database session.
         order_detail_id (int): The ID of the order detail to retrieve.
     Returns:
-        Order detail: The order detail object if found, otherwise raises ValueError.
+        Order detail: The order detail object if found,
+          otherwise raises ValueError.
     """
     db_order_detail = session.get(OrderDetail, order_detail_id)
     if not db_order_detail:
@@ -61,7 +62,8 @@ def get_order_detail_by_client_id(
         session (Session): The database session.
         client_id(int): The client_id of the order detail to retrieve.
     Returns:
-        Order detail: The order detail object if found, otherwise raises ValueError.
+        Order detail: The order detail object if found,
+          otherwise raises ValueError.
     """
     statement = select(OrderDetail).where(OrderDetail.client_id == client_id)
     db_order_detail = session.exec(

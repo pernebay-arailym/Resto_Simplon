@@ -9,7 +9,8 @@ class Menu(SQLModel, table=True):
 
     Args:
         SQLModel (SQLModel): Base class for SQLAlchemy models.
-        table (bool, optional): Whether the model is a SQLAlchemy table. Defaults to False.
+        table (bool, optional): Whether the model is a SQLAlchemy table.
+        Defaults to False.
     """
 
     id: Optional[int] = Field(default=None, primary_key=True)

@@ -81,7 +81,8 @@ def signup_user(
     #  à un user qui passe par /signup pour s'inscrit
     customer_role = role_crud.get_role_by_role_type(session, RoleType.customer)
 
-    # pour la création d'un "employee" ou d'un admin, il faut passer par la route /post
+    # pour la création d'un "employee" ou d'un admin,
+    #  il faut passer par la route /post
     #  qui devrait être protégée APRES création d'un admin
     user_schema_in = UserCreate(
         username=user_schema_public_in.username,
