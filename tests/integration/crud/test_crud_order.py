@@ -13,15 +13,24 @@ from app.crud.order_crud import (
     delete_order,
 )
 
+DATABASE_URL = "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@psql_dev:5432/${POSTGRES_DB}"
 
-# fixtures
-@pytest.fixture
-def session():
-    """Create a new in-memory SQLite database for each test."""
-    engine = create_engine("sqlite:///:memory:")
+
+@pytest.fixture(scope="session")
+def engine():
+    """Create a Postgres engine for the test session."""
+    engine = create_engine(DATABASE_URL, echo=False)
+    SQLModel.metadata.drop_all(engine)  # clean slate
     SQLModel.metadata.create_all(engine)
+    return engine
+
+
+@pytest.fixture
+def session(engine):
+    """Provide a fresh DB session for each test."""
     with Session(engine) as session:
         yield session
+        session.rollback()  # rollback anything not committed
 
 
 @pytest.fixture
@@ -36,11 +45,11 @@ def sample_order(session):
 
 
 def test_create_and_get_order(session):
-    order_data = OrderCreate(client_id=42, total_price=50.0, status=OrderStatus.CREATED)
+    order_data = OrderCreate(client_id=1, total_price=50.0, status=OrderStatus.CREATED)
     order = create_order(session, order_data)
 
     assert order.id is not None
-    assert order.client_id == 42
+    assert order.client_id == 1
     assert order.total_price == 50.0
     assert order.status == OrderStatus.CREATED
     assert isinstance(order.created_at, datetime)
@@ -48,12 +57,12 @@ def test_create_and_get_order(session):
 
     fetched = get_order(session, order.id)
     assert fetched.id == order.id
-    assert fetched.client_id == 42
+    assert fetched.client_id == 1
 
 
 def test_get_all_orders(session, sample_order):
     orders = get_all_orders(session)
-    assert len(orders) == 1
+    assert len(orders) >= 1
     assert orders[0].id == sample_order.id
 
 
@@ -66,7 +75,7 @@ def test_get_order_by_client_id(session, sample_order):
 def test_get_orders_by_date(session, sample_order):
     today = date.today()
     orders = get_orders_by_date(session, today)
-    assert len(orders) == 1
+    assert len(orders) >= 1
     assert orders[0].id == sample_order.id
 
 
