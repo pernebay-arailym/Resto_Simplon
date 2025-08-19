@@ -98,12 +98,12 @@ def test_get_orders_by_date(session: Session, sample_order):
     #assert orders[0].id == sample_order.id
 
 
-#def test_update_order(session: Session, sample_order):
-    #update_data = OrderUpdate(total_price=200.0, status=OrderStatus.PREPARING)
-    #updated = update_order(session, sample_order.id, update_data)
+def test_update_order(session: Session, sample_order):
+    update_data = OrderUpdate(total_price=200.0, status=OrderStatus.PREPARING)
+    updated = update_order(session, sample_order.id, update_data)
 
-    #assert updated.total_price == 200.0
-    #assert updated.status == OrderStatus.PREPARING
+    assert updated.total_price == 200.0
+    assert updated.status == OrderStatus.PREPARING
 
 
 #def test_delete_order(session: Session, sample_order):
