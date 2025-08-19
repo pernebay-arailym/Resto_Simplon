@@ -39,7 +39,8 @@ class OrderDetailPublic(OrderDetailCreate):
     Public representation of a order detail.
 
     Args:
-        OrderDetailCreate (OrderDetailCreate): Base model for order detail creation.
+        OrderDetailCreate (OrderDetailCreate): Base model for
+         order detail creation.
     """
 
     id: int

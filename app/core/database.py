@@ -10,7 +10,8 @@ def create_db_and_tables():
     Crée les tables de la base de données si elles n'existent pas.
     """
     # SQLModel.metadata.create_all(engine)
-    # Il est souvent préférable d'utiliser des migrations comme Alembic pour un projet en production.
+    # Il est souvent préférable d'utiliser des migrations comme
+    # Alembic pour un projet en production.
     pass
 
 

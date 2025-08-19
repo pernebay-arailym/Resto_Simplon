@@ -19,7 +19,8 @@ async def lifespan(app: FastAPI):
     # on passe par alembic pour la création de la BDD
     # # Crée les tables de la base de données au démarrage
     # create_db_and_tables()
-    # Le 'yield' indique que l'application est maintenant démarrée et prête à servir
+    # Le 'yield' indique que l'application est maintenant démarrée
+    # et prête à servir
     yield
     print("Application en cours d'arrêt...")
     # Ici, vous pouvez ajouter du code pour fermer des connexions, etc.

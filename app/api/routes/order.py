@@ -177,7 +177,8 @@ def get_order_total(*, session: SessionDep, order_id: int):
 @router.get("/{order_id}/finalize_order", response_model=OrderPublic)
 def get_finalize_order(*, session: SessionDep, order_id: int):
     """
-    "Finalize" an order (after lines being added, computes the total price and set status to PREPARING).
+    "Finalize" an order (after lines being added,
+    computes the total price and set status to PREPARING).
 
     Args:
         session (SessionDep): The database session dependency.
