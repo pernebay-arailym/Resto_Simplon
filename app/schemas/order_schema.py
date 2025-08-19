@@ -15,7 +15,9 @@ class OrderCreate(BaseModel):
 
     client_id: int = Field(...)
     total_price: float = Field(..., gt=0)
-    status: OrderStatus = Field(...)  # Using the OrderStatus enum for status field
+    status: OrderStatus = Field(
+        ...
+    )  # Using the OrderStatus enum for status field
 
 
 class OrderUpdate(BaseModel):

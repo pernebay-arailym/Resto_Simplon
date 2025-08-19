@@ -1,6 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from app.schemas.category_schema import CategoryCreate, CategoryPublic, CategoryUpdate
+from app.schemas.category_schema import (
+    CategoryCreate,
+    CategoryPublic,
+    CategoryUpdate,
+)
 from app.crud import category_crud
 from typing import List
 
@@ -51,7 +55,9 @@ def create_category(*, session: SessionDep, category_in: CategoryCreate):
             detail="The category with this name already exists in the system.",
         )
 
-    category = category_crud.create_category(session=session, category=category_in)
+    category = category_crud.create_category(
+        session=session, category=category_in
+    )
 
     return category
 

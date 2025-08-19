@@ -18,7 +18,9 @@ def create_user(session: Session, user_schema: UserCreate) -> User:
         password_hash=hash_password(user_schema.password_hash),
     )
 
-    roles = session.exec(select(Role).where(Role.id.in_(user_schema.role_ids))).all()
+    roles = session.exec(
+        select(Role).where(Role.id.in_(user_schema.role_ids))
+    ).all()
     if len(roles) != len(user_schema.role_ids):
         raise ValueError("Un ou plusieurs role_ids sont invalides")
 
@@ -79,6 +81,8 @@ def check_user(session: Session, user_schema: UserLogin) -> bool:
     return False
 
 
-def get_all_orders_by_customer(session: Session, user_id: int) -> List[OrderPublic]:
+def get_all_orders_by_customer(
+    session: Session, user_id: int
+) -> List[OrderPublic]:
     statement = select(OrderBase).where(OrderBase.client_id == user_id)
     return session.exec(statement).all()

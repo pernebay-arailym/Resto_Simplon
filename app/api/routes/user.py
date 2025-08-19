@@ -34,9 +34,13 @@ def userupdate_to_user(
 ) -> User:
     roles_in_user = []
     for role_id in user_update.role_ids:
-        roles_in_user.append(role_crud.get_role_by_id(session=session, role_id=role_id))
+        roles_in_user.append(
+            role_crud.get_role_by_id(session=session, role_id=role_id)
+        )
     return User(
-        **user_update.model_dump(exclude={"role_ids"}), id=user_id, roles=roles_in_user
+        **user_update.model_dump(exclude={"role_ids"}),
+        id=user_id,
+        roles=roles_in_user,
     )
 
 
@@ -45,21 +49,31 @@ def usercreate_to_user(
 ) -> User:
     roles_in_user = []
     for role_id in user_create.role_ids:
-        roles_in_user.append(role_crud.get_role_by_id(session=session, role_id=role_id))
+        roles_in_user.append(
+            role_crud.get_role_by_id(session=session, role_id=role_id)
+        )
     return User(
-        **user_create.model_dump(exclude={"role_ids"}), id=user_id, roles=roles_in_user
+        **user_create.model_dump(exclude={"role_ids"}),
+        id=user_id,
+        roles=roles_in_user,
     )
 
 
-@router.get("/", response_model=List[UserPublic], dependencies=[Depends(JWTBearer())])
+@router.get(
+    "/", response_model=List[UserPublic], dependencies=[Depends(JWTBearer())]
+)
 def get_all_users(*, session: SessionDep) -> List[UserPublic]:
     users = user_crud.get_all_users(session=session)
     return [user_to_userpublic(user) for user in users]
 
 
 @router.post("/signup", response_model=Dict[str, str])
-def signup_user(*, session: SessionDep, user_schema_public_in: UserPublicCreate):
-    existing_user = user_crud.get_user_by_email(session, user_schema_public_in.email)
+def signup_user(
+    *, session: SessionDep, user_schema_public_in: UserPublicCreate
+):
+    existing_user = user_crud.get_user_by_email(
+        session, user_schema_public_in.email
+    )
     if existing_user:
         raise HTTPException(
             status_code=400, detail="A user already exists with this email."
@@ -113,7 +127,9 @@ def create_user(*, session: SessionDep, user_schema_in: UserCreate):
 
 
 @router.get(
-    "/{user_id}", response_model=UserPublic, dependencies=[Depends(JWTBearer())]
+    "/{user_id}",
+    response_model=UserPublic,
+    dependencies=[Depends(JWTBearer())],
 )
 def get_user_by_id(*, session: SessionDep, user_id: int):
     user_model = user_crud.get_user_by_id(session=session, user_id=user_id)
@@ -133,7 +149,8 @@ def update_user(*, session: SessionDep, user_id: int, user_in: UserUpdate):
     )
     if user_with_same_email and (user_with_same_email.id != user_id):
         raise HTTPException(
-            status_code=400, detail="An other user with the same email already exists."
+            status_code=400,
+            detail="An other user with the same email already exists.",
         )
     updated_user = user_crud.update_user(
         session=session,

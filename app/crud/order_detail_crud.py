@@ -1,6 +1,9 @@
 from typing import List
 from app.models.order_detail import OrderDetail
-from app.schemas.order_detail_schema import OrderDetailCreate, OrderDetailUpdate
+from app.schemas.order_detail_schema import (
+    OrderDetailCreate,
+    OrderDetailUpdate,
+)
 from sqlmodel import Session, select
 
 
@@ -49,7 +52,9 @@ def get_all_order_details(session: Session) -> list[OrderDetail]:
     return session.exec(statement).all()
 
 
-def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDetail:
+def get_order_detail_by_client_id(
+    session: Session, client_id: int
+) -> OrderDetail:
     """
     Retrieve a order detail by its title from the database.
     Args:
@@ -66,7 +71,9 @@ def get_order_detail_by_client_id(session: Session, client_id: int) -> OrderDeta
 
 
 def update_order_detail(
-    session: Session, order_detail_id: int, order_detail_update: OrderDetailUpdate
+    session: Session,
+    order_detail_id: int,
+    order_detail_update: OrderDetailUpdate,
 ) -> OrderDetail:
     """
     Update an existing order detail in the database.

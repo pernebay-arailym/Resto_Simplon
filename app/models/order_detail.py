@@ -5,7 +5,9 @@ from enum import Enum
 import sqlalchemy as sa
 
 
-class OrderDetailStatus(str, Enum):  # Enum for order status to ensure valid values.
+class OrderDetailStatus(
+    str, Enum
+):  # Enum for order status to ensure valid values.
     CREATED = "Created"
     PREPARING = "Preparing"
     READY = "Ready"
