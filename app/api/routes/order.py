@@ -1,9 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
-from sqlmodel import Session, select
 from app.schemas.order_schema import OrderCreate, OrderPublic, OrderUpdate
 from app.schemas.order_detail_schema import OrderDetailPublic
-from app.models.order_detail import OrderDetail
 from app.crud import order_crud, order_detail_crud
 from typing import List
 from datetime import date

@@ -1,7 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import Optional
-from enum import Enum
-from datetime import datetime, timezone
 from app.models.order import OrderStatus
 
 
@@ -38,6 +35,7 @@ class OrderPublic(OrderCreate):
     Args:
         OrderCreate (OrderCreate): Base model for order creation.
     """
+
     id: int
     client_id: int
     total_price: float

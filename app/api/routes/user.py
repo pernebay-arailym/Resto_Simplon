@@ -1,10 +1,8 @@
 from typing import List, Dict
 from fastapi import APIRouter, HTTPException
-from sqlmodel import Session, select
 from app.api.deps import SessionDep
 from app.auth.auth_handler import signJWT
 from app.models.user import User
-from app.models.order import OrderBase
 from app.schemas.user_schema import (
     UserCreate,
     UserPublicCreate,
@@ -17,7 +15,7 @@ from app.crud import user_crud, role_crud
 from app.models.role import RoleType
 
 
-from fastapi import FastAPI, Body, Depends
+from fastapi import Depends
 from app.auth.auth_bearer import JWTBearer, RoleChecker, TokenResponse
 
 
