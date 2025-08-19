@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
 from app.schemas.role_schema import RoleCreate, RoleUpdate, RolePublic
-from app.api.deps import SessionDep
 from app.crud import role_crud
 
 router = APIRouter(tags=["Roles"])

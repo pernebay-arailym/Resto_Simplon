@@ -2,7 +2,6 @@ from typing import List
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-import jwt
 from app.auth.auth_handler import decodeJWT
 
 

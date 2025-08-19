@@ -1,4 +1,3 @@
-from typing import Optional
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from enum import Enum

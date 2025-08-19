@@ -1,8 +1,6 @@
 from sqlmodel import Field, SQLModel
-from typing import Literal
 from typing import Optional
 from enum import Enum
-import sqlalchemy as sa
 
 
 class OrderDetailStatus(

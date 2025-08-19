@@ -1,7 +1,7 @@
 from typing import List
 from app.models.order import OrderBase
 from app.schemas.order_schema import OrderPublic
-from app.schemas.user_schema import UserCreate, UserLogin, UserUpdate
+from app.schemas.user_schema import UserCreate, UserLogin
 from app.models import User, Role
 from sqlmodel import Session, select
 from app.auth.security import hash_password, verify_password

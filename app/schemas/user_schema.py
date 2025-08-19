@@ -1,8 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
-from datetime import datetime
-from app.models.role import Role
 from typing import List, Optional
-from app.schemas.role_schema import RolePublic
 
 
 class UserBase(BaseModel):
