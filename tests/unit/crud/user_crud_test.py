@@ -29,10 +29,16 @@ def test_create_user(session: Session, user_data: dict):
         role_1 = role_crud.get_role_by_id(session, 1)
         role_2 = role_crud.get_role_by_id(session, 2)
         role_3 = role_crud.get_role_by_id(session, 3)
-        if ((role_1 is None) or (role_2 is None) or (role_3 is None)):
-            role_1 = role_crud.create_role(session, RoleCreate(role_type=RoleType.admin))
-            role_2 = role_crud.create_role(session, RoleCreate(role_type=RoleType.employee))
-            role_3 = role_crud.create_role(session, RoleCreate(role_type=RoleType.customer))
+        if (role_1 is None) or (role_2 is None) or (role_3 is None):
+            role_1 = role_crud.create_role(
+                session, RoleCreate(role_type=RoleType.admin)
+            )
+            role_2 = role_crud.create_role(
+                session, RoleCreate(role_type=RoleType.employee)
+            )
+            role_3 = role_crud.create_role(
+                session, RoleCreate(role_type=RoleType.customer)
+            )
         # user_schema = UserCreate(**user_data)
         user_schema = UserCreate(
             username=user_data["username"],
@@ -45,6 +51,8 @@ def test_create_user(session: Session, user_data: dict):
             role_ids=user_data["role_ids"],
         )
         user = user_crud.create_user(session, user_schema)
-        conftest.compare_object_to_dict(user, user_data, ["id", "password_hash"])
+        conftest.compare_object_to_dict(
+            user, user_data, ["id", "password_hash"]
+        )
     finally:
         user_crud.delete_user(session, user.id)

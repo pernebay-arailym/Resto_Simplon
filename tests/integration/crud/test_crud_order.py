@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 import pytest
-import uuid # for generating unique user emails 
+import uuid  # for generating unique user emails
 from datetime import datetime, date, timezone
 from sqlmodel import SQLModel, Session, create_engine
 from app.models.order import OrderBase, OrderStatus
@@ -42,7 +42,7 @@ def sample_order(session, sample_user):
     order_data = OrderCreate(
         client_id=sample_user.id, total_price=100.0, status=OrderStatus.CREATED
     )
-    order = create_order(session, order_data)       
+    order = create_order(session, order_data)
     return order
 
 
@@ -61,7 +61,7 @@ def test_create_and_get_order(session: Session, sample_user):
     order_data = OrderCreate(
         client_id=sample_user.id,  # use the fixture user id
         total_price=50.0,
-        status=OrderStatus.CREATED
+        status=OrderStatus.CREATED,
     )
     order = create_order(session, order_data)
 
@@ -77,12 +77,13 @@ def test_create_and_get_order(session: Session, sample_user):
     assert fetched.client_id == sample_user.id
     delete_order(session, order.id)
     delete_user(session, sample_user.id)
-      # Clean up the user after test    
+    # Clean up the user after test
 
-#def test_get_all_orders(session: Session, sample_order):
-    #orders = get_all_orders(session)
-    #assert len(orders) >= 1
-   # assert orders[0].id == sample_order.id
+
+# def test_get_all_orders(session: Session, sample_order):
+# orders = get_all_orders(session)
+# assert len(orders) >= 1
+# assert orders[0].id == sample_order.id
 def test_get_all_orders(session: Session, sample_order):
     orders = get_all_orders(session)
     assert sample_order in orders
@@ -100,7 +101,6 @@ def test_get_order_by_client_id(session: Session, sample_order):
     delete_user(session, user_id)
 
 
-
 def test_get_orders_by_date(session: Session, sample_order):
     today = date.today()
     orders = get_orders_by_date(session, today)
@@ -108,8 +108,8 @@ def test_get_orders_by_date(session: Session, sample_order):
     user_id = sample_order.client_id
     delete_order(session, sample_order.id)
     delete_user(session, user_id)
-    #assert len(orders) >= 1
-    #assert orders[0].id == sample_order.id
+    # assert len(orders) >= 1
+    # assert orders[0].id == sample_order.id
 
 
 def test_update_order(session: Session, sample_order):
@@ -121,7 +121,6 @@ def test_update_order(session: Session, sample_order):
     user_id = sample_order.client_id
     delete_order(session, sample_order.id)
     delete_user(session, user_id)
-
 
 
 def test_delete_order(session: Session, sample_order):

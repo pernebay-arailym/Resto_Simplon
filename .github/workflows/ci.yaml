@@ -32,7 +32,7 @@ jobs:
         if: always() # this step is always executed to make sure report can be uploaded.
 
       - name: Run black
-        run: docker compose -f ./compose_test.yaml exec api_test black --check . > black_report.txt
+        run: docker compose -f ./compose_test.yaml exec api_test black --check ./app ./tests > black_report.txt
 
       - name: Upload black report
         uses: actions/upload-artifact@v4

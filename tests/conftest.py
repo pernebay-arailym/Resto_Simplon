@@ -24,7 +24,9 @@ def client_test_fixture(session: Session):
 
 
 def compare_object_to_dict(
-    an_object: any, a_dict: dict, properties_to_exclude: List[str] | None = None
+    an_object: any,
+    a_dict: dict,
+    properties_to_exclude: List[str] | None = None,
 ) -> bool:
     if an_object is None:
         assert False, "Object is None"
@@ -32,7 +34,9 @@ def compare_object_to_dict(
         if properties_to_exclude is None:
             properties_to_exclude = []
         for property in dir(an_object):
-            if (property in a_dict.keys()) and (property not in properties_to_exclude):
+            if (property in a_dict.keys()) and (
+                property not in properties_to_exclude
+            ):
                 if getattr(an_object, property) != a_dict[property]:
                     print(
                         f"Property {property} should equal {a_dict[property]} but equals {getattr(an_object, property)}"
