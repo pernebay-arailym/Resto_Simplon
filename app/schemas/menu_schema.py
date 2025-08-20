@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -24,11 +25,11 @@ class MenuUpdate(BaseModel):
         BaseModel (BaseModel): Base model for Pydantic schemas.
     """
 
-    name: str = Field(None, max_length=100)
-    price: float = Field(None, ge=0)
-    category_id: int = Field(None)
-    description: str = Field(None, max_length=255)
-    stock: int = Field(None, ge=0)
+    name: Optional[str] = Field(None, max_length=100)
+    price: Optional[float] = Field(None, ge=0)
+    category_id: Optional[int] = Field(None)
+    description: Optional[str] = Field(None, max_length=255)
+    stock: Optional[int] = Field(None, ge=0)
 
 
 class MenuPublic(MenuCreate):

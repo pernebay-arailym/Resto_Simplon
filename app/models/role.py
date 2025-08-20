@@ -1,7 +1,9 @@
+from __future__ import annotations
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from enum import Enum
 from .user_role_link import UserRoleLink
+from app.models.user import User
 
 
 class RoleType(str, Enum):

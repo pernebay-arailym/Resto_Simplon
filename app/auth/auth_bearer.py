@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List, Optional
 from fastapi import Depends, Request, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -17,28 +17,20 @@ class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super(JWTBearer, self).__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request):
-        credentials: HTTPAuthorizationCredentials = await super(
+    async def __call__(
+        self, request: Request
+    ) -> Optional[HTTPAuthorizationCredentials]:
+        credentials: Optional[HTTPAuthorizationCredentials] = await super(
             JWTBearer, self
         ).__call__(request)
-        if credentials:
-            if not credentials.scheme == "Bearer":
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid authentication scheme.",
-                )
-            decoded_payload = decodeJWT(credentials.credentials)
-            if not decoded_payload:
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token or expired token.",
-                )
-            return decoded_payload
-        else:
+
+        if not credentials:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Invalid authorization code.",
             )
+
+        return credentials
 
 
 # Dépendance pour vérifier les rôles
@@ -51,10 +43,11 @@ class RoleChecker:
 
         user_roles = payload.get("roles")
         user_allowed = False
-        for user_role in user_roles:
-            if user_role in self.allowed_roles:
-                user_allowed = True
-                break
+        if user_roles:
+            for user_role in user_roles:
+                if user_role in self.allowed_roles:
+                    user_allowed = True
+                    break
 
         if not user_allowed:
             raise HTTPException(

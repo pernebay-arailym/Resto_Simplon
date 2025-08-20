@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.models.order import OrderBase
 from app.schemas.order_schema import OrderPublic
 from app.schemas.user_schema import UserCreate, UserLogin
@@ -18,11 +18,14 @@ def create_user(session: Session, user_schema: UserCreate) -> User:
         password_hash=hash_password(user_schema.password_hash),
     )
 
-    roles = session.exec(
-        select(Role).where(Role.id.in_(user_schema.role_ids))
-    ).all()
-    if len(roles) != len(user_schema.role_ids):
-        raise ValueError("Un ou plusieurs role_ids sont invalides")
+    if user_schema.role_ids:
+        roles = list(
+            session.exec(
+                select(Role).where(Role.id.in_(user_schema.role_ids))  # type: ignore[union-attr]
+            ).all()
+        )
+        if len(roles) != len(user_schema.role_ids):
+            raise ValueError("Un ou plusieurs role_ids sont invalides")
 
     new_user.roles = roles
     session.add(new_user)
@@ -32,16 +35,16 @@ def create_user(session: Session, user_schema: UserCreate) -> User:
     return new_user
 
 
-def get_user_by_id(session: Session, user_id: int) -> User | None:
+def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     return session.get(User, user_id)
 
 
 def get_all_users(session: Session) -> list[User]:
     statement = select(User)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
-def get_user_by_email(session: Session, email: str) -> User:
+def get_user_by_email(session: Session, email: str) -> Optional[User]:
     statement = select(User).where(User.email == email)
     user_model = session.exec(statement).first()
     return user_model
@@ -74,10 +77,11 @@ def delete_user(session: Session, user_id: int) -> None:
 def check_user(session: Session, user_schema: UserLogin) -> bool:
     user = get_user_by_email(session, user_schema.email)
 
-    if user.email == user_schema.email and verify_password(
-        user.password_hash, user_schema.password_hash
-    ):
-        return True
+    if user:
+        if user.email == user_schema.email and verify_password(
+            user.password_hash, user_schema.password_hash
+        ):
+            return True
     return False
 
 
@@ -85,4 +89,4 @@ def get_all_orders_by_customer(
     session: Session, user_id: int
 ) -> List[OrderPublic]:
     statement = select(OrderBase).where(OrderBase.client_id == user_id)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())  # type: ignore[arg-type]

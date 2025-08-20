@@ -1,8 +1,10 @@
+from __future__ import annotations
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from datetime import datetime, timezone
 from pydantic import EmailStr
 from .user_role_link import UserRoleLink
+from app.models.role import Role
 
 
 class User(SQLModel, table=True):

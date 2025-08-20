@@ -1,3 +1,4 @@
+from typing import List
 from app.schemas.menu_schema import MenuCreate, MenuUpdate
 from app.models.menu import Menu
 from sqlmodel import Session, select
@@ -19,7 +20,7 @@ def create_menu(session: Session, menu: MenuCreate) -> Menu:
     return db_menu
 
 
-def get_menu_by_id(session: Session, menu_id: int) -> Menu:
+def get_menu_by_id(session: Session, menu_id: int) -> Menu | None:
     """
     Retrieve a menu by ID from the database.
     Args:
@@ -34,7 +35,7 @@ def get_menu_by_id(session: Session, menu_id: int) -> Menu:
     return db_menu
 
 
-def get_all_menus(session: Session) -> list[Menu]:
+def get_all_menus(session: Session) -> List[Menu]:
     """
     Retrieve all menus from the database.
     Args:
@@ -43,10 +44,10 @@ def get_all_menus(session: Session) -> list[Menu]:
         list[Menu]: A list of all menu objects.
     """
     statement = select(Menu)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
-def get_menu_by_name(session: Session, name: str) -> Menu:
+def get_menu_by_name(session: Session, name: str) -> Menu | None:
     """
     Retrieve a menu by its title from the database.
     Args:
