@@ -3,5 +3,5 @@ line-length = 79
 target-version = ['py312']
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing"
+addopts = "-ra --cov=app --junitxml=pytest_report.xml --cov-report=html --cov-report=xml --cov-report=term-missing --cov-fail-under=60"
 testpaths = "tests"

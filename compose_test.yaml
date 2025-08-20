@@ -1,0 +1,37 @@
+services:
+
+  psql_test:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=user_postgres
+      - POSTGRES_DB=db_test
+      - POSTGRES_PASSWORD=pass_postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_postgres -d db_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api_test:
+    image: python:slim-bookworm
+    working_dir: /app_base
+    restart: always
+    ports:
+      - "8080:8000"
+    depends_on:
+      psql_test:
+        condition: service_healthy
+    environment:
+      - JWT_SECRET=ihiuhiuhiuhihi
+      - JWT_ALGORITHM=HS256
+      - JWT_TOKEN_EXPIRES=604800
+      - DATABASE_URL=postgresql+psycopg://user_postgres:pass_postgres@psql_test:5432/db_test
+      - POSTGRES_USER=user_postgres
+      - POSTGRES_DB=db_test
+      - POSTGRES_PASSWORD=pass_postgres
+    volumes:
+      - .:/app_base
+    command: ["tail", "-f", "/dev/null"]
