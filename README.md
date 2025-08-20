@@ -82,8 +82,9 @@ JWT_TOKEN_EXPIRES=3600  # in seconds
 
 ### PostgreSQL configuration
 
-**Use psql_dev as THE_SERVER for dev**
-**Use psql_prod as THE_SERVER for prod**
+**Use psql_dev as THE_SERVER for dev.**
+
+**Use psql_prod as THE_SERVER for prod.**
 
 ```
 POSTGRES_USER=db_user
@@ -103,6 +104,9 @@ PGADMIN_DEFAULT_PASSWORD=mypassword
 
 The config_pgadmin_dev.json and config_pgadmin_prod.json files configure pgAdmin connections.
 
+**Use psql_dev as THE_SERVER for dev.**
+
+**Use psql_prod as THE_SERVER for prod.**
 Example:
 ```
 {
@@ -159,13 +163,10 @@ Pipeline tasks:
 2. **Run tests** with `pytest` and measure code coverage
 3. **Code style** checks with `black --check` and verification tools
 4. **Static type checking** with `mypy`
-5. **Build Docker image**
 
 The CI/CD pipeline runs on every push and pull request, ensuring code quality and deployment readiness.
 
 ### Reports
-
-- **HTML coverage report:** `htmlcov/index.html` (detailed visual report)
 - **XML coverage report:** `coverage.xml` (for CI/CD tools)
 
 ## 📖 API Documentation
