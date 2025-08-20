@@ -18,15 +18,11 @@ jobs:
 
       - name: Install dependencies and configure
         run: | # allows to run several commands
-          docker compose -f ./compose_test.yaml run api_test pip install -r requirements.txt
-          docker compose -f ./compose_test.yaml run echo "Path = " $PATH
-          docker compose -f ./compose_test.yaml run echo ---------------------------------------------
-          docker compose -f ./compose_test.yaml run ls -Rl
-          docker compose -f ./compose_test.yaml run echo ---------------------------------------------
-          docker compose -f ./compose_test.yaml run api_test alembic upgrade head
+          docker compose -f ./compose_test.yaml exec api_test pip install -r requirements.txt
+          docker compose -f ./compose_test.yaml exec api_test alembic upgrade head
 
       - name: Run tests with pytest
-        run: docker compose -f ./compose_test.yaml run pytest
+        run: docker compose -f ./compose_test.yaml exec pytest
 
       - name: Upload pytest report
         uses: actions/upload-artifact@v4
@@ -36,7 +32,7 @@ jobs:
         if: always() # this step is always executed to make sure report can be uploaded.
 
       - name: Run black
-        run: docker compose -f ./compose_test.yaml run black --check . > black_report.txt
+        run: docker compose -f ./compose_test.yaml exec black --check . > black_report.txt
 
       - name: Upload black report
         uses: actions/upload-artifact@v4
@@ -46,7 +42,7 @@ jobs:
         if: always() # this step is always executed to make sure report can be uploaded.
 
       - name: Run mypy
-        run: docker compose -f ./compose_test.yaml run mypy --junit-xml mypy_report.xml
+        run: docker compose -f ./compose_test.yaml exec mypy --junit-xml mypy_report.xml
 
       - name: Upload mypy report
         uses: actions/upload-artifact@v4
