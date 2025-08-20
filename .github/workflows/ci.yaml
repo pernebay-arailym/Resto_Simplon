@@ -24,25 +24,25 @@ jobs:
       - name: Run tests with pytest
         run: docker compose -f ./compose_test.yaml exec api_test pytest
 
-      - name: Upload pytest report
+      - name: Upload pytest report in xml
         uses: actions/upload-artifact@v4
         with:
-          name: pytest_report
+          name: pytest_report_xml
           path: pytest_report.xml
         if: always() # this step is always executed to make sure report can be uploaded.
 
-      - name: Run black
-        run: docker compose -f ./compose_test.yaml exec api_test black --check ./app ./tests > black_report.txt
-
-      - name: Upload black report
+      - name: Upload pytest report in html
         uses: actions/upload-artifact@v4
         with:
-          name: black_report
-          path: black_report.txt
+          name: pytest_report_html
+          path: pytest_report.html
         if: always() # this step is always executed to make sure report can be uploaded.
 
+      - name: Run black
+        run: docker compose -f ./compose_test.yaml exec api_test black --check ./app ./tests
+
       - name: Run mypy
-        run: docker compose -f ./compose_test.yaml exec api_test mypy --junit-xml mypy_report.xml
+        run: docker compose -f ./compose_test.yaml exec api_test mypy ./app --junit-xml mypy_report.xml
 
       - name: Upload mypy report
         uses: actions/upload-artifact@v4
