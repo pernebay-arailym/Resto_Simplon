@@ -1,16 +1,16 @@
 # 🍽️ Resto_Simplon
 
 Ordering and management system for a restaurant, built with **FastAPI**, **PostgreSQL**, and **Docker**.  
-This project was developed between **August 4 – 22, 2025** as part of an intensive Data Engineer formation, by a group of 3 members - @cebdewaelle, @alexishs, @pernebay-arailym.
+This project was developed between **August 4 – 22, 2025** as part of an intensive Data Engineer formation, by a group of 3 members.
 
 ---
 
 ## 📌 Project Overview
 
-**Business Need**  
+**Business Need**:  
 The client, *RestauSimplon*, wanted to digitalize the management of restaurant orders, previously handled on paper (leading to frequent errors and delays).
 
-**Our Mission**  
+**Our Mission**:  
 Deliver a secure, tested, and containerized **REST API** for:  
 - Authentication & Authorization with **JWT**  
 - Menu management (**CRUD** for articles)  
@@ -29,7 +29,7 @@ Deliver a secure, tested, and containerized **REST API** for:
 - **Auth:** OAuth2 Password flow with JWT (access & refresh tokens)  
 - **Containerization:** Docker, Docker Compose  
 - **CI/CD:** GitHub Actions, pytest  
-- **Other tools:** pgAdmin, bcrypt (hashing), PyJWT  
+- **Other tools:** pgAdmin, Argon2, PyJWT  
 
 ---
 
@@ -54,10 +54,6 @@ In the api_dev container:
 pip install -r requirements.txt
 ```
 
-### Run Alembic migrations to create tables
-```bash
-alembic upgrade head
-```
 
 ### Start FastAPI with hot reload
 ```bash
@@ -85,6 +81,10 @@ JWT_TOKEN_EXPIRES=3600  # in seconds
 ```
 
 ### PostgreSQL configuration
+
+**Use psql_dev as THE_SERVER for dev**
+**Use psql_prod as THE_SERVER for prod**
+
 ```
 POSTGRES_USER=db_user
 POSTGRES_DB=resto_simplon
@@ -93,13 +93,11 @@ DATABASE_URL="postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@THE_SER
 ```
 
 ### pgAdmin credentials
+
 ```
 PGADMIN_DEFAULT_EMAIL=example@example.com
 PGADMIN_DEFAULT_PASSWORD=mypassword
 ```
-
-- Use psql_dev as THE_SERVER for dev
-- Use psql_prod as THE_SERVER for prod
 
 ## 🗄️ pgAdmin Config Files
 
@@ -114,7 +112,7 @@ Example:
       "Group": "Docker Servers",
       "Port": 5432,
       "Username": "db_user",
-      "Host": "psql_dev",
+      "Host": "THE_SERVER",
       "SSLMode": "prefer",
       "MaintenanceDB": "resto_simplon"
     }
@@ -122,53 +120,33 @@ Example:
 }
 ```
 
-## 📑 Database Migrations
-
-We use Alembic for database schema migrations.
-
-### Run migrations manually in dev:
-- alembic upgrade head
-
-### Generate a new migration:
-- alembic revision --autogenerate -m "description"
-
 ## 🔐 Authentication
 
 - Implemented with JWT tokens (OAuth2 Password flow).
 - Roles: admin, employee, client
-- Security: bcrypt hashing, refresh & access tokens, configurable expiry
+- Security: Argon2, refresh & access tokens, configurable expiry
 
 ## 🛒 Orders & Status Enum
 
 Orders are created by clients (for themselves) or staff (for any client).
 The system automatically calculates the total price.
 
-Order Status Workflow
-
-We defined a 6-state enumeration:
+Order Status Workflow.
+We defined the states enumeration:
 
 ```
 class OrderStatus(str, Enum):
     CREATED = "Created"
     PREPARING = "Preparing"
-    READY = "Ready"
-    SERVED = "Served"
-    CANCELLED = "Cancelled"
-    PAID = "Paid"
 ```
 
 ## 🧪 Testing
 
 We use pytest for unit and integration tests.
-
 Run all tests:
 
 ``` bash
 pytest
-```
-Run tests with coverage:
-```bash
-pytest --cov=app --cov-report=term-missing
 ```
 
 ## 🔄 CI/CD
@@ -177,13 +155,18 @@ We implemented GitHub Actions at .github/workflows/ci.yaml:
 
 Pipeline tasks:
 
-1. Install dependencies
-2. Run linting and tests (pytest, coverage ≥ 80%)
-3. Build Docker images
-4. Push images to registry
-5. Deploy
+1. **Install dependencies**
+2. **Run tests** with `pytest` and measure code coverage
+3. **Code style** checks with `black --check` and verification tools
+4. **Static type checking** with `mypy`
+5. **Build Docker image**
 
 The CI/CD pipeline runs on every push and pull request, ensuring code quality and deployment readiness.
+
+### Reports
+
+- **HTML coverage report:** `htmlcov/index.html` (detailed visual report)
+- **XML coverage report:** `coverage.xml` (for CI/CD tools)
 
 ## 📖 API Documentation
 
@@ -197,6 +180,10 @@ ReDoc → http://localhost:8000/redoc
 
 This project is licensed under the MIT License. See LICENSE for details.
 
-## 👥 Authors
+## 👥 Project team
 
-Project completed during Data Engineer Intensive Formation (3 weeks, Aug 2025).
+Project was completed during **Data Engineer Intensive Formation** by a group of 3 members:
+
+🔗 [Alexis Halbot-Schoonaert](https://github.com/alexishs)  
+🔗 [Sébastien Dewaelle](https://github.com/cebdewaelle)  
+🔗 [Arailym Pernebay](https://github.com/pernebay-arailym)
