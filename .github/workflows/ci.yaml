@@ -8,27 +8,48 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false # Continue the other matrix'jobs even if one fails.
+      fail-fast: false # Stop if one step fails.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+      - name: Build and start containers
+        run: docker compose -f ./compose_test.yaml up --build -d
 
-      - name: Install dependencies
+      - name: Install dependencies and configure
         run: | # allows to run several commands
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          docker compose -f ./compose_test.yaml run api_test pip install -r requirements.txt
+          docker compose -f ./compose_test.yaml run api_test alembic upgrade head
 
       - name: Run tests with pytest
-        run: pytest
+        run: docker compose -f ./compose_test.yaml run pytest
 
-      - name: Upload pytest test results
+      - name: Upload pytest report
         uses: actions/upload-artifact@v4
         with:
-          name: pytest_reports
+          name: pytest_report
           path: pytest_report.xml
-        if: always() # this step is always executed to make sure reports can be uploaded.
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Run black
+        run: docker compose -f ./compose_test.yaml run black --check . > black_report.txt
+
+      - name: Upload black report
+        uses: actions/upload-artifact@v4
+        with:
+          name: black_report
+          path: black_report.txt
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Run mypy
+        run: docker compose -f ./compose_test.yaml run mypy --junit-xml mypy_report.xml
+
+      - name: Upload mypy report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy_report
+          path: mypy_report.xml
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Remove containers
+        run: docker compose -f ./compose_test.yaml down
