@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -20,7 +21,7 @@ class CategoryUpdate(BaseModel):
         BaseModel (BaseModel): Base model for Pydantic schemas.
     """
 
-    name: str = Field(None, max_length=100)
+    name: Optional[str] = Field(None, max_length=100)
 
 
 class CategoryPublic(CategoryCreate):

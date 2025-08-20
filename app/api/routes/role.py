@@ -8,7 +8,11 @@ router = APIRouter(tags=["Roles"])
 
 @router.get("/", response_model=list[RolePublic])
 def get_all_roles(*, session: SessionDep) -> list[RolePublic]:
-    return role_crud.get_all_roles(session=session)
+    roles = role_crud.get_all_roles(session=session)
+    roles_publics = []
+    for role in roles:
+        roles_publics.append(RolePublic(role_type=role.role_type, id=role.id))
+    return roles_publics
 
 
 @router.post("/", response_model=RolePublic)
@@ -50,7 +54,7 @@ def update_role(*, session: SessionDep, role_id: int, role_in: RoleUpdate):
             status_code=400,
             detail="An other role with the same role type already exists.",
         )
-    updated_role = role_crud.update_crud(
+    updated_role = role_crud.update_role(
         session=session, role_id=role_id, role_update=role_in
     )
     return updated_role

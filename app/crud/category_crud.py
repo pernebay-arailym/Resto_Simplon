@@ -43,10 +43,10 @@ def get_all_categories(session: Session) -> list[Category]:
         list[Category]: A list of all category objects.
     """
     statement = select(Category)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
-def get_category_by_name(session: Session, name: str) -> Category:
+def get_category_by_name(session: Session, name: str) -> Category | None:
     """
     Retrieve a category by its title from the database.
     Args:

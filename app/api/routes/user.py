@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import Any, List, Dict, Optional
 from fastapi import APIRouter, HTTPException
 from app.api.deps import SessionDep
 from app.auth.auth_handler import signJWT
@@ -17,6 +17,7 @@ from app.models.role import RoleType
 
 from fastapi import Depends
 from app.auth.auth_bearer import JWTBearer, RoleChecker, TokenResponse
+from app.auth.dependencies import get_current_user_payload
 
 
 router = APIRouter(tags=["Users"])
@@ -31,10 +32,11 @@ def userupdate_to_user(
     user_id: int, user_update: UserUpdate, session: SessionDep
 ) -> User:
     roles_in_user = []
-    for role_id in user_update.role_ids:
-        roles_in_user.append(
-            role_crud.get_role_by_id(session=session, role_id=role_id)
-        )
+    if user_update.role_ids:
+        for role_id in user_update.role_ids:
+            roles_in_user.append(
+                role_crud.get_role_by_id(session=session, role_id=role_id)
+            )
     return User(
         **user_update.model_dump(exclude={"role_ids"}),
         id=user_id,
@@ -57,10 +59,12 @@ def usercreate_to_user(
     )
 
 
-@router.get(
-    "/", response_model=List[UserPublic], dependencies=[Depends(JWTBearer())]
-)
-def get_all_users(*, session: SessionDep) -> List[UserPublic]:
+@router.get("/", response_model=List[UserPublic])
+def get_all_users(
+    *,
+    session: SessionDep,
+    payload: Dict[str, Any] = Depends(get_current_user_payload),
+) -> List[UserPublic]:
     users = user_crud.get_all_users(session=session)
     return [user_to_userpublic(user) for user in users]
 
@@ -84,6 +88,14 @@ def signup_user(
     # pour la création d'un "employee" ou d'un admin,
     #  il faut passer par la route /post
     #  qui devrait être protégée APRES création d'un admin
+    if customer_role is None:
+        customer_role_id = 3
+    else:
+        if type(customer_role.id) is int:
+            customer_role_id = customer_role.id
+        else:
+            customer_role_id = 3
+
     user_schema_in = UserCreate(
         username=user_schema_public_in.username,
         email=user_schema_public_in.email,
@@ -92,7 +104,7 @@ def signup_user(
         adresse=user_schema_public_in.adresse,
         phone=user_schema_public_in.phone,
         password_hash=user_schema_public_in.password_hash,
-        role_ids=[customer_role.id],
+        role_ids=[customer_role_id],
     )
 
     created_user = user_crud.create_user(session, user_schema_in)
@@ -107,7 +119,11 @@ def signup_user(
 def login_user(*, session: SessionDep, user_schema_in: UserLogin):
     if user_crud.check_user(session, user_schema_in):
         user_info = user_crud.get_user_by_email(session, user_schema_in.email)
-        roles = [role.role_type.value for role in user_info.roles]
+        roles = []
+        if user_info:
+            roles = [role.role_type.value for role in user_info.roles]
+        else:
+            roles.append("customer")
         return signJWT(user_schema_in.email, roles)
 
     return {"error": "Wrong login details!"}
@@ -143,14 +159,15 @@ def update_user(*, session: SessionDep, user_id: int, user_in: UserUpdate):
     if not user_model:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_with_same_email = user_crud.get_user_by_email(
-        session=session, email=user_in.email
-    )
-    if user_with_same_email and (user_with_same_email.id != user_id):
-        raise HTTPException(
-            status_code=400,
-            detail="An other user with the same email already exists.",
+    if user_in.email:
+        user_with_same_email = user_crud.get_user_by_email(
+            session=session, email=user_in.email
         )
+        if user_with_same_email and (user_with_same_email.id != user_id):
+            raise HTTPException(
+                status_code=400,
+                detail="An other user with the same email already exists.",
+            )
     updated_user = user_crud.update_user(
         session=session,
         user_id=user_id,

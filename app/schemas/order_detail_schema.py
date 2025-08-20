@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 from app.models.order_detail import OrderDetailStatus
 
@@ -26,12 +27,12 @@ class OrderDetailUpdate(BaseModel):
         BaseModel (BaseModel): Base model for Pydantic schemas.
     """
 
-    order_id: int = Field(None)
-    menu_id: int = Field(None)
-    status: OrderDetailStatus = Field(None)
-    price: float = Field(None, ge=0)
-    comment: str = Field(None, max_length=255)
-    quantity: int = Field(None, gt=0)
+    order_id: Optional[int] = Field(None)
+    menu_id: Optional[int] = Field(None)
+    status: Optional[OrderDetailStatus] = Field(None)
+    price: Optional[float] = Field(None, ge=0)
+    comment: Optional[str] = Field(None, max_length=255)
+    quantity: Optional[int] = Field(None, gt=0)
 
 
 class OrderDetailPublic(OrderDetailCreate):
