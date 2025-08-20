@@ -4,7 +4,6 @@ from typing import Optional, List
 from datetime import datetime, timezone
 from pydantic import EmailStr
 from .user_role_link import UserRoleLink
-from app.models.role import Role
 
 
 class User(SQLModel, table=True):
@@ -19,7 +18,7 @@ class User(SQLModel, table=True):
     last_name: str = Field(max_length=50, nullable=False)
     adresse: str = Field(nullable=False)
     phone: str = Field(max_length=30, nullable=False)
-    roles: List["Role"] = Relationship(
+    roles: List["Role"] = Relationship(  # type: ignore[name-defined]
         back_populates="users", link_model=UserRoleLink
     )
 

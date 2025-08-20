@@ -3,7 +3,6 @@ from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from enum import Enum
 from .user_role_link import UserRoleLink
-from app.models.user import User
 
 
 class RoleType(str, Enum):
@@ -15,7 +14,7 @@ class RoleType(str, Enum):
 class Role(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     role_type: RoleType = Field(unique=True)
-    users: List["User"] = Relationship(
+    users: List["User"] = Relationship(  # type: ignore[name-defined]
         back_populates="roles", link_model=UserRoleLink
     )
     # # test de relation User <> Role sans table intermédiaire
