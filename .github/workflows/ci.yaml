@@ -19,6 +19,10 @@ jobs:
       - name: Install dependencies and configure
         run: | # allows to run several commands
           docker compose -f ./compose_test.yaml run api_test pip install -r requirements.txt
+          docker compose -f ./compose_test.yaml run echo "Path = " $PATH
+          docker compose -f ./compose_test.yaml run echo ---------------------------------------------
+          docker compose -f ./compose_test.yaml run ls -Rl
+          docker compose -f ./compose_test.yaml run echo ---------------------------------------------
           docker compose -f ./compose_test.yaml run api_test alembic upgrade head
 
       - name: Run tests with pytest
