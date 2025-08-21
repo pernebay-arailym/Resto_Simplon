@@ -8,10 +8,22 @@ from app.schemas.order_detail_schema import (
 from app.crud import order_detail_crud
 from typing import List
 
+from fastapi import Depends
+from app.auth.auth_bearer import (
+    RoleChecker,
+    TokenResponse,
+    get_current_user_payload,
+)
+from app.models.role import RoleType
+
 router = APIRouter(tags=["Order Detail"])
 
 
-@router.post("/", response_model=OrderDetailPublic)
+@router.post(
+    "/",
+    response_model=OrderDetailPublic,
+    dependencies=[Depends(get_current_user_payload)],
+)
 def create_order_detail(
     *, session: SessionDep, order_detail_in: OrderDetailCreate
 ):
@@ -36,7 +48,11 @@ def create_order_detail(
     return order_detail
 
 
-@router.get("/{order_detail_id}", response_model=OrderDetailPublic)
+@router.get(
+    "/{order_detail_id}",
+    response_model=OrderDetailPublic,
+    dependencies=[Depends(get_current_user_payload)],
+)
 def get_order_detail(*, session: SessionDep, order_detail_id: int):
     """
     Get a order detail by ID.
@@ -60,7 +76,13 @@ def get_order_detail(*, session: SessionDep, order_detail_id: int):
     return order_detail
 
 
-@router.get("/", response_model=List[OrderDetailPublic])
+@router.get(
+    "/",
+    response_model=List[OrderDetailPublic],
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_all_order_details(*, session: SessionDep):
 
     # Get all order details.
@@ -68,7 +90,11 @@ def get_all_order_details(*, session: SessionDep):
     return order_detail_crud.get_all_order_details(session=session)
 
 
-@router.put("/{order_detail_id}", response_model=dict)
+@router.put(
+    "/{order_detail_id}",
+    response_model=dict,
+    dependencies=[Depends(get_current_user_payload)],
+)
 def update_order_detail(
     *,
     session: SessionDep,
@@ -106,7 +132,13 @@ def update_order_detail(
     return updated_order_detail
 
 
-@router.delete("/{order_detail_id}", response_model=dict)
+@router.delete(
+    "/{order_detail_id}",
+    response_model=dict,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def delete_order_detail(*, session: SessionDep, order_detail_id: int):
     """
     Delete an order detail by ID.
