@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.models.order_detail import OrderDetail
 from app.schemas.order_detail_schema import (
     OrderDetailCreate,
@@ -25,7 +25,9 @@ def create_order_detail(
     return db_order_detail
 
 
-def get_order_detail(session: Session, order_detail_id: int) -> OrderDetail:
+def get_order_detail(
+    session: Session, order_detail_id: int
+) -> Optional[OrderDetail]:
     """
     Retrieve an order detail by ID from the database.
     Args:
@@ -50,33 +52,14 @@ def get_all_order_details(session: Session) -> list[OrderDetail]:
         list[Order detail]: A list of all order detail objects.
     """
     statement = select(OrderDetail)
-    return session.exec(statement).all()
-
-
-def get_order_detail_by_client_id(
-    session: Session, client_id: int
-) -> OrderDetail:
-    """
-    Retrieve a order detail by its title from the database.
-    Args:
-        session (Session): The database session.
-        client_id(int): The client_id of the order detail to retrieve.
-    Returns:
-        Order detail: The order detail object if found,
-          otherwise raises ValueError.
-    """
-    statement = select(OrderDetail).where(OrderDetail.client_id == client_id)
-    db_order_detail = session.exec(
-        statement
-    ).first()  # TODO we get only the first order with the client_id
-    return db_order_detail
+    return list(session.exec(statement).all())
 
 
 def update_order_detail(
     session: Session,
     order_detail_id: int,
     order_detail_update: OrderDetailUpdate,
-) -> OrderDetail:
+) -> Optional[OrderDetail]:
     """
     Update an existing order detail in the database.
     Args:
@@ -127,4 +110,4 @@ def get_all_order_details_by_order(
         list[Order detail]: A list of all order details objects from an order.
     """
     statement = select(OrderDetail).where(OrderDetail.order_id == order_id)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())

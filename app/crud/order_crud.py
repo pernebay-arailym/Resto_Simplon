@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.models.order import OrderBase
 from app.schemas.order_schema import OrderCreate, OrderUpdate
 from app.models.order import OrderStatus
@@ -24,7 +24,7 @@ def create_order(session: Session, order: OrderCreate) -> OrderBase:
     return db_order
 
 
-def get_order(session: Session, order_id: int) -> OrderBase:
+def get_order(session: Session, order_id: int) -> Optional[OrderBase]:
     """
     Retrieve an order by ID from the database.
     Args:
@@ -39,7 +39,7 @@ def get_order(session: Session, order_id: int) -> OrderBase:
     return db_order
 
 
-def get_all_orders(session: Session) -> List[OrderBase]:
+def get_all_orders(session: Session) -> Optional[List[OrderBase]]:
     """
     Retrieve all orders from the database.
     Args:
@@ -48,10 +48,12 @@ def get_all_orders(session: Session) -> List[OrderBase]:
         list[Order]: A list of all order objects.
     """
     statement = select(OrderBase)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
-def get_order_by_client_id(session: Session, client_id: int) -> OrderBase:
+def get_order_by_client_id(
+    session: Session, client_id: int
+) -> OrderBase | None:
     """
     Retrieve a order by its title from the database.
     Args:
@@ -79,14 +81,14 @@ def get_orders_by_date(session: Session, target_date: date) -> List[OrderBase]:
     start_date = datetime.combine(target_date, time.min)
     end_date = datetime.combine(target_date, time.max)
     statement = select(OrderBase).where(
-        OrderBase.created_at.between(start_date, end_date)
+        OrderBase.created_at.between(start_date, end_date)  # type: ignore[attr-defined]
     )
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
 def update_order(
     session: Session, order_id: int, order_update: OrderUpdate
-) -> OrderBase:
+) -> Optional[OrderBase]:
     """
     Update an existing order in the database.
     Args:
@@ -139,14 +141,14 @@ def get_order_total(session: Session, order_id: int) -> float:
     """
     # order = get_order(session, order_id)
     order_details = get_all_order_details_by_order(session, order_id)
-    order_total = 0
+    order_total = 0.0
     for order_detail in order_details:
         if order_detail.status is not OrderDetailStatus.CANCELLED:
             order_total += order_detail.price * order_detail.quantity
     return float(order_total)
 
 
-def finalize_order(session: Session, order_id: int) -> OrderBase:
+def finalize_order(session: Session, order_id: int) -> Optional[OrderBase]:
     """
     Finalize an order.
     Args:
@@ -158,13 +160,14 @@ def finalize_order(session: Session, order_id: int) -> OrderBase:
         OrderBase: The updated order object.
     """
     order = get_order(session, order_id)
-    # Finalize can only be made if the order is in status "created"
-    if order.status is OrderStatus.CREATED:
-        order_update = OrderUpdate(
-            client_id=order.client_id,
-            status=OrderStatus.PREPARING,
-            total_price=get_order_total(session, order_id),
-        )
-        update_order(session, order_id, order_update)
-        order = get_order(session, order_id)
+    if order:
+        # Finalize can only be made if the order is in status "created"
+        if order.status is OrderStatus.CREATED:
+            order_update = OrderUpdate(
+                client_id=order.client_id,
+                status=OrderStatus.PREPARING,
+                total_price=get_order_total(session, order_id),
+            )
+            update_order(session, order_id, order_update)
+            order = get_order(session, order_id)
     return order

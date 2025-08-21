@@ -3,6 +3,7 @@ from app.api.deps import SessionDep
 from app.schemas.order_detail_schema import (
     OrderDetailCreate,
     OrderDetailPublic,
+    OrderDetailUpdate,
 )
 from app.crud import order_detail_crud
 from typing import List
@@ -72,14 +73,14 @@ def update_order_detail(
     *,
     session: SessionDep,
     order_detail_id: int,
-    order_detail_in: OrderDetailCreate,
+    order_detail_in: OrderDetailUpdate,
 ):
     """
     Update an order detail by ID.
 
     Args:
         session (SessionDep): The database session dependency.
-        order_detail_id (uuid.UUID): The ID of the order detail to update.
+        order_detail_id (uuid.int): The ID of the order detail to update.
         order_detail_in (OrderDetailCreate): The order update data.
 
     Raises:
@@ -127,7 +128,7 @@ def delete_order_detail(*, session: SessionDep, order_detail_id: int):
     if not order_detail:
         raise HTTPException(status_code=404, detail="Order Detail not found")
 
-    order_detail_crud.delete_order(
+    order_detail_crud.delete_order_detail(
         session=session, order_detail_id=order_detail_id
     )
 

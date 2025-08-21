@@ -13,7 +13,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password_hash: str = Field(..., min_length=8)
-    role_ids: List[int] = Field(..., min_items=1)
+    role_ids: List[int] = Field(..., min_items=1)  # type: ignore[call-overload]
 
 
 class UserPublicCreate(UserBase):

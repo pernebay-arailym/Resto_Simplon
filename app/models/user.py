@@ -1,3 +1,4 @@
+from __future__ import annotations
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from datetime import datetime, timezone
@@ -17,7 +18,7 @@ class User(SQLModel, table=True):
     last_name: str = Field(max_length=50, nullable=False)
     adresse: str = Field(nullable=False)
     phone: str = Field(max_length=30, nullable=False)
-    roles: List["Role"] = Relationship(
+    roles: List["Role"] = Relationship(  # type: ignore[name-defined]
         back_populates="users", link_model=UserRoleLink
     )
 

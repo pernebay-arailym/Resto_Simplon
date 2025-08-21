@@ -15,7 +15,9 @@ def get_role_by_id(session: Session, role_id: int) -> Role | None:
     return session.get(Role, role_id)
 
 
-def get_role_by_role_type(session: Session, role_type: RoleType) -> Role:
+def get_role_by_role_type(
+    session: Session, role_type: RoleType
+) -> Role | None:
     statement = select(Role).where(Role.role_type == role_type)
     role_model = session.exec(statement).first()
     return role_model
@@ -23,7 +25,7 @@ def get_role_by_role_type(session: Session, role_type: RoleType) -> Role:
 
 def get_all_roles(session: Session) -> list[Role]:
     statement = select(Role)
-    return session.exec(statement).all()
+    return list(session.exec(statement).all())
 
 
 def update_role(
