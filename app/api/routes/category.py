@@ -8,10 +8,20 @@ from app.schemas.category_schema import (
 from app.crud import category_crud
 from typing import List
 
+from fastapi import Depends
+from app.auth.auth_bearer import RoleChecker
+from app.models.role import RoleType
+
 router = APIRouter(tags=["Categories"])
 
 
-@router.get("/", response_model=List[CategoryPublic])
+@router.get(
+    "/",
+    response_model=List[CategoryPublic],
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_all_categories(*, session: SessionDep):
     """
     Get all categories.
@@ -29,7 +39,13 @@ def get_all_categories(*, session: SessionDep):
     return category_crud.get_all_categories(session=session)
 
 
-@router.post("/", response_model=CategoryPublic)
+@router.post(
+    "/",
+    response_model=CategoryPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def create_category(*, session: SessionDep, category_in: CategoryCreate):
     """
     Create a new category.
@@ -62,7 +78,13 @@ def create_category(*, session: SessionDep, category_in: CategoryCreate):
     return category
 
 
-@router.get("/{category_id}", response_model=CategoryPublic)
+@router.get(
+    "/{category_id}",
+    response_model=CategoryPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_category_by_id(*, session: SessionDep, category_id: int):
     """
     Get a category by ID.
@@ -86,7 +108,13 @@ def get_category_by_id(*, session: SessionDep, category_id: int):
     return category
 
 
-@router.put("/{category_id}", response_model=CategoryPublic)
+@router.put(
+    "/{category_id}",
+    response_model=CategoryPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def update_category(
     *, session: SessionDep, category_id: int, category_in: CategoryUpdate
 ):
@@ -119,7 +147,13 @@ def update_category(
     return updated_category
 
 
-@router.delete("/{category_id}", response_model=dict)
+@router.delete(
+    "/{category_id}",
+    response_model=dict,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def delete_category(*, session: SessionDep, category_id: int):
     """
     Delete a category by ID.

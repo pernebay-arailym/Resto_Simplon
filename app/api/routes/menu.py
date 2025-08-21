@@ -4,10 +4,20 @@ from app.schemas.menu_schema import MenuCreate, MenuPublic, MenuUpdate
 from app.crud import menu_crud
 from typing import List
 
+from fastapi import Depends
+from app.auth.auth_bearer import RoleChecker, TokenResponse
+from app.models.role import RoleType
+
 router = APIRouter(tags=["Menus"])
 
 
-@router.post("/", response_model=MenuPublic)
+@router.post(
+    "/",
+    response_model=MenuPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def create_menu(*, session: SessionDep, menu_in: MenuCreate):
     """
     Create a new menu.
@@ -36,7 +46,13 @@ def create_menu(*, session: SessionDep, menu_in: MenuCreate):
     return menu
 
 
-@router.get("/", response_model=List[MenuPublic])
+@router.get(
+    "/",
+    response_model=List[MenuPublic],
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_all_menus(*, session: SessionDep):
     """
     Get all menus.
@@ -54,7 +70,13 @@ def get_all_menus(*, session: SessionDep):
     return menu_crud.get_all_menus(session=session)
 
 
-@router.get("/{menu_id}", response_model=MenuPublic)
+@router.get(
+    "/{menu_id}",
+    response_model=MenuPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_menu_by_id(*, session: SessionDep, menu_id: int):
     """
     Get a menu by ID.
@@ -76,7 +98,13 @@ def get_menu_by_id(*, session: SessionDep, menu_id: int):
     return menu
 
 
-@router.put("/{menu_id}", response_model=MenuPublic)
+@router.put(
+    "/{menu_id}",
+    response_model=MenuPublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def update_menu(*, session: SessionDep, menu_id: int, menu_in: MenuUpdate):
     """
     Update a menu by ID.
@@ -105,7 +133,13 @@ def update_menu(*, session: SessionDep, menu_id: int, menu_in: MenuUpdate):
     return updated_menu
 
 
-@router.delete("/{menu_id}", response_model=dict)
+@router.delete(
+    "/{menu_id}",
+    response_model=dict,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def delete_menu(*, session: SessionDep, menu_id: int):
     """
     Delete a menu by ID.

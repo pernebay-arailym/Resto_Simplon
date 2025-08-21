@@ -3,10 +3,20 @@ from app.api.deps import SessionDep
 from app.schemas.role_schema import RoleCreate, RoleUpdate, RolePublic
 from app.crud import role_crud
 
+from fastapi import Depends
+from app.auth.auth_bearer import RoleChecker, TokenResponse
+from app.models.role import RoleType
+
 router = APIRouter(tags=["Roles"])
 
 
-@router.get("/", response_model=list[RolePublic])
+@router.get(
+    "/",
+    response_model=list[RolePublic],
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_all_roles(*, session: SessionDep) -> list[RolePublic]:
     roles = role_crud.get_all_roles(session=session)
     roles_publics = []
@@ -31,7 +41,13 @@ def create_role(*, session: SessionDep, role_schema_in: RoleCreate):
     return role_model
 
 
-@router.get("/{role_id}", response_model=RolePublic)
+@router.get(
+    "/{role_id}",
+    response_model=RolePublic,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def get_role_by_id(*, session: SessionDep, role_id: int):
     role_model = role_crud.get_role_by_id(session=session, role_id=role_id)
     if not role_model:
@@ -39,7 +55,13 @@ def get_role_by_id(*, session: SessionDep, role_id: int):
     return role_model
 
 
-@router.put("/{role_id}", response_model=dict)
+@router.put(
+    "/{role_id}",
+    response_model=dict,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def update_role(*, session: SessionDep, role_id: int, role_in: RoleUpdate):
     role_model = role_crud.get_role_by_id(session=session, role_id=role_id)
     if not role_model:
@@ -60,7 +82,13 @@ def update_role(*, session: SessionDep, role_id: int, role_in: RoleUpdate):
     return updated_role
 
 
-@router.delete("/{role_id}", response_model=dict)
+@router.delete(
+    "/{role_id}",
+    response_model=dict,
+    dependencies=[
+        Depends(RoleChecker(allowed_roles=[RoleType.admin, RoleType.employee]))
+    ],
+)
 def delete_role(*, session: SessionDep, role_id: int):
     role_model = role_crud.get_role_by_id(session=session, role_id=role_id)
     if not role_model:
