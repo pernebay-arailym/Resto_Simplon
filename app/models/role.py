@@ -1,4 +1,3 @@
-from __future__ import annotations
 from sqlmodel import Field, SQLModel, Relationship
 from typing import Optional, List
 from enum import Enum
