@@ -107,6 +107,9 @@ The config_pgadmin_dev.json and config_pgadmin_prod.json files configure pgAdmin
 **Use psql_dev as THE_SERVER for dev.**
 
 **Use psql_prod as THE_SERVER for prod.**
+
+**Use the same username as POSTGRES_USER.**  
+
 Example:
 ```
 {
@@ -142,6 +145,10 @@ We defined the states enumeration:
 class OrderStatus(str, Enum):
     CREATED = "Created"
     PREPARING = "Preparing"
+    READY = "Ready"
+    SERVED = "Served"
+    CANCELLED = "Cancelled"
+    PAID = "Paid"
 ```
 
 ## 🧪 Testing
