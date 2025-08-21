@@ -168,6 +168,7 @@ The CI/CD pipeline runs on every push and pull request, ensuring code quality an
 
 ### Reports
 - **XML coverage report:** `coverage.xml` (for CI/CD tools)
+- **Pytest HTML report:** `pytest_report.html` (detailed test results with pass/fail summary)
 
 ## 📖 API Documentation
 
