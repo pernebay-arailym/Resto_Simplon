@@ -1,0 +1,55 @@
+name: Project CI
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Stop if one step fails.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and start containers
+        run: docker compose -f ./compose_test.yaml up --build -d
+
+      - name: Install dependencies and configure
+        run: | # allows to run several commands
+          docker compose -f ./compose_test.yaml exec api_test pip install -r requirements.txt
+          docker compose -f ./compose_test.yaml exec api_test alembic upgrade head
+
+      - name: Run tests with pytest
+        run: docker compose -f ./compose_test.yaml exec api_test pytest
+
+      - name: Upload pytest report in xml
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest_report_xml
+          path: pytest_report.xml
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Upload pytest report in html
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest_report_html
+          path: pytest_report.html
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Run black
+        run: docker compose -f ./compose_test.yaml exec api_test black --check ./app ./tests
+
+      - name: Run mypy
+        run: docker compose -f ./compose_test.yaml exec api_test mypy ./app --junit-xml mypy_report.xml
+
+      - name: Upload mypy report
+        uses: actions/upload-artifact@v4
+        with:
+          name: mypy_report
+          path: mypy_report.xml
+        if: always() # this step is always executed to make sure report can be uploaded.
+
+      - name: Remove containers
+        run: docker compose -f ./compose_test.yaml down
